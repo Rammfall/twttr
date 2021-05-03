@@ -1,0 +1,68 @@
+# Node.js
+# Build a general Node.js project with npm.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+name: Server app
+trigger:
+  branches:
+    include:
+      - master
+      - develop
+      - releases/*
+      - feature/*
+      - bugfix/*
+      - hotfix/*
+  paths:
+    include:
+      - application/*
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+resources:
+  containers:
+    - container: pg11
+      image: postgres:11
+      ports:
+        - 5432:5432
+      env:
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: postgres
+
+jobs:
+  - job: Build_test
+    services:
+      postgres: pg11
+    displayName: Build and test server application
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.x'
+        displayName: 'Install Node.js'
+      - script: |
+          npm install
+          npm run build
+        displayName: 'Build'
+        workingDirectory: ./application
+      - script: |
+          npm run db:migrate
+          npm run coverage
+        displayName: 'Tests'
+        workingDirectory: ./application
+        env:
+          CI: true
+          dbUser: postgres
+          dbName: postgres
+          dbPassword: postgres
+  - job: audit
+    displayName: Audit dependencies
+    steps:
+      - task: NodeTool@0
+        inputs:
+          versionSpec: '12.x'
+        displayName: 'Install Node.js'
+      - script: |
+          npm audit
+        displayName: 'Audit'
+        workingDirectory: ./application
