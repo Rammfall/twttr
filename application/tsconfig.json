@@ -3,6 +3,12 @@
   "compilerOptions": {
     "outDir": "dist",
     "moduleResolution": "Node",
-    "baseUrl": "src"
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": "src",
+    "paths": {
+      "@config": ["src/config/*"],
+      "@constants": ["src/constants/*"]
+    }
   }
 }

@@ -1,6 +1,31 @@
-version: 3
+version: '3.9'
 services:
   application:
+    container_name: twttr-backend
     build: application/
+    ports:
+    - '3000:3000'
   client:
+    container_name: twttr-frontend
     build: web-client/
+    ports:
+    - '4000:4000'
+  postgres:
+    container_name: twttr-postgres
+    image: postgres:12-alpine
+    volumes:
+      - ../log:/root/log:cached
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - PSQL_HISTFILE=/root/log/.psql_history
+      - POSTGRES_DB=postgres
+    ports:
+    - 5555:5432
+  grafana:
+    image: grafana/grafana:latest
+    container_name: twttr-grafana
+    restart: unless-stopped
+    user: "104"
+    ports:
+    - '3030:3000'

@@ -1,6 +1,16 @@
 import Fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import dotenv from 'dotenv';
+import 'reflect-metadata';
 
-const server: FastifyInstance = Fastify({});
+dotenv.config();
+
+import { APPLICATION_PORT } from './config/application';
+import db from './initializers/db';
+
+const server: FastifyInstance = Fastify({
+  logger: true,
+});
+dotenv.config();
 
 const opts: RouteShorthandOptions = {
   schema: {
@@ -23,7 +33,8 @@ server.get('/ping', opts, async () => {
 
 const start = async () => {
   try {
-    await server.listen(3000);
+    await db();
+    await server.listen(APPLICATION_PORT, '0.0.0.0');
   } catch (err) {
     server.log.error(err);
     process.exit(1);
