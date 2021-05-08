@@ -4,37 +4,22 @@ import 'reflect-metadata';
 
 dotenv.config();
 
-import { APPLICATION_PORT } from './config/application';
+import { APPLICATION_PORT, SERVER_ADDRESS } from './config/application';
 import db from './initializers/db';
+import apiRoute from './routes/api';
 
 const server: FastifyInstance = Fastify({
   logger: true,
+  http2: true,
 });
 dotenv.config();
 
-const opts: RouteShorthandOptions = {
-  schema: {
-    response: {
-      200: {
-        type: 'object',
-        properties: {
-          pong: {
-            type: 'string',
-          },
-        },
-      },
-    },
-  },
-};
-
-server.get('/ping', opts, async () => {
-  return { pong: 'it worked!' };
-});
+server.register(apiRoute);
 
 const start = async () => {
   try {
     await db();
-    await server.listen(APPLICATION_PORT, '0.0.0.0');
+    await server.listen(APPLICATION_PORT, SERVER_ADDRESS);
   } catch (err) {
     server.log.error(err);
     process.exit(1);
