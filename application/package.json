@@ -52,7 +52,7 @@
     "fastify-plugin": "^3.0.0",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.32"
+    "typeorm": "^0.2.33"
   },
   "volta": {
     "node": "14.16.0",
