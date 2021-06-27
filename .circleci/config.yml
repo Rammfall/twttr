@@ -23,6 +23,7 @@ executors:
 jobs:
   serverApplication:
     executor: node
+    working_directory: ~/twttr/application
     steps:
       - checkout
       - run:
