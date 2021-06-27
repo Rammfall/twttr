@@ -26,6 +26,7 @@ jobs:
     working_directory: ~/twttr/application
     steps:
       - checkout
+          path: ~/twttr
       - run:
           command: npm ci
           name: Installing dependencies
