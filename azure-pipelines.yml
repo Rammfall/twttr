@@ -47,7 +47,7 @@ jobs:
         workingDirectory: ./application
       - script: |
           npm run db:migrate
-          npm run coverage
+          npm run test:coverage
         displayName: 'Tests'
         workingDirectory: ./application
         env:
