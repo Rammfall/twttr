@@ -24,6 +24,7 @@ jobs:
   serverApplication:
     executor: node
     steps:
+      - checkout
       - run:
           command: npm ci
           name: Installing dependencies
