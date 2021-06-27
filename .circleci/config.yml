@@ -24,11 +24,9 @@ executors:
 jobs:
   serverApplication:
     executor: node
-    working_directory: ~/application
+    working_directory: ~/twttr/application
     steps:
       - checkout
-#      - attach_workspace:
-#          at: ./application
       - run:
           command: |
             cd application
