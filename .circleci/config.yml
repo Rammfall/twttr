@@ -26,12 +26,10 @@ jobs:
     working_directory: ~/twttr
     steps:
       - checkout
-      - run:
-          command: cd application && ls
+      - attach_workspace:
+          at: /application
       - run:
           command: npm ci
-          attach_workspace:
-            at: /application
           name: Installing dependencies
 
 workflows:
