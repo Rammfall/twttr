@@ -23,10 +23,11 @@ executors:
 jobs:
   serverApplication:
     executor: node
-    working_directory: ~/twttr/application
+    working_directory: ~/twttr
     steps:
       - checkout
-          path: ~/twttr
+      - run:
+          comand: cd application
       - run:
           command: npm ci
           name: Installing dependencies
