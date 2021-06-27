@@ -8,6 +8,7 @@ const createUser = async (
   reply: FastifyReply
 ): Promise<void> => {
   const {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     body: { username, email, password },
   } = request;

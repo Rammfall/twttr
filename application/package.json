@@ -10,10 +10,11 @@
     "db:reboot": "npm run db:revert && npm run db:migrate",
     "db:migration:create": "npm run typeorm migration:create -n",
     "test": "jest",
+    "test:coverage": "jest --coverage",
     "build": "tsc",
     "start": "node -r tsconfig-paths/register dist/index.js",
     "start:dev": "nodemon",
-    "eslint": "eslint"
+    "linter:js": "eslint src/"
   },
   "keywords": [
     "nodejs",

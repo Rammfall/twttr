@@ -57,5 +57,7 @@ jobs:
         run: npm run build
       - name: Run db migrations
         run: npm run db:migrate
+      - name: Run linters
+        run: npm run linter:js
       - name: Run tests
-        run: npm run coverage
+        run: npm run test:coverage

@@ -1,4 +1,4 @@
-import Fastify, { FastifyInstance, RegisterOptions } from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify';
 import dotenv from 'dotenv';
 import 'reflect-metadata';
 
