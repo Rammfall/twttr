@@ -1,1 +1,30 @@
 version: 2.1
+
+name: Node.js application
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - 'feature/**'
+      - 'bugfix/**'
+      - 'hotfix/**'
+    paths:
+      - 'src/**'
+  schedule:
+    - cron: '* 0 * * *'
+
+executors:
+  node:
+    docker:
+      - image: circleci/node:14.16.1
+
+jobs:
+  serverApplication:
+    executor: node
+    steps:
+      - deps:
+          run: npm ci
+          name: Installing dependencies
+
