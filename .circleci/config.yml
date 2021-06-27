@@ -17,17 +17,18 @@ on:
 
 executors:
   node:
+    working_directory: ~/twttr
     docker:
       - image: circleci/node:14.16.1
 
 jobs:
   serverApplication:
     executor: node
-    working_directory: ~/twttr
+#    working_directory: ~/twttr
     steps:
       - checkout
-      - attach_workspace:
-          at: /application
+#      - attach_workspace:
+#          at: ./application
       - run:
           command: npm ci
           name: Installing dependencies
