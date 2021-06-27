@@ -1,4 +1,4 @@
-import Fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify';
+import Fastify, { FastifyInstance, RegisterOptions } from 'fastify';
 import dotenv from 'dotenv';
 import 'reflect-metadata';
 
@@ -8,13 +8,14 @@ import { APPLICATION_PORT, SERVER_ADDRESS } from './config/application';
 import db from './initializers/db';
 import apiRoute from './routes/api';
 
-const server: FastifyInstance = Fastify({
-  logger: true,
-  http2: true,
-});
-dotenv.config();
+const logger = {};
 
-server.register(apiRoute);
+const server: FastifyInstance = Fastify({
+  logger: logger,
+});
+
+server.register(import('fastify-formbody'));
+server.register(apiRoute, { prefix: '/api' });
 
 const start = async () => {
   try {

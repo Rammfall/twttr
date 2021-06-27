@@ -2,21 +2,26 @@ import { createConnection, Connection } from 'typeorm';
 
 import { type, database, host, password, port, username } from '../config/db';
 import { isProductionEnv } from '../config/application';
+import UserAccount from '../db/entity/UserAccount';
 
 const ssl: boolean = isProductionEnv;
 
 export default async (): Promise<Connection> => {
-  return await createConnection({
+  const connection = await createConnection({
     type,
     database,
     host,
     password,
     port,
     username,
-    entities: ['src/db/entity/*.ts'],
+    entities: [UserAccount],
     extra: {
       ssl,
     },
     logging: true,
   });
+
+  console.log({ msg: 'DB was connected', time: new Date() });
+
+  return connection;
 };

@@ -1,15 +1,17 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
-enum Roles {
+export enum Roles {
   admin = 'admin',
   user = 'user',
   owner = 'owner',
 }
 
-@Entity()
-class UserAccount {
+@Entity({
+  name: 'UserAccount',
+})
+class UserAccount extends BaseEntity {
   @PrimaryGeneratedColumn()
-  id!: number;
+  readonly id!: number;
 
   @Column({
     type: 'varchar',

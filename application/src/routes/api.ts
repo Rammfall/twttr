@@ -1,22 +1,9 @@
-import {
-  FastifyInstance,
-  FastifyPluginAsync,
-  DoneFuncWithErrOrRes,
-} from 'fastify';
+import { FastifyPluginAsync, FastifyInstance } from 'fastify';
 
-export interface MyPluginOptions {
-  myPluginOption: string;
-}
+import v1Route from './v1';
 
-const apiRoute = (
-  fastify: FastifyInstance,
-  opts: any,
-  done: DoneFuncWithErrOrRes
-): FastifyPluginAsync<MyPluginOptions> => {
-  fastify.get('/', async (request, reply) => {
-    reply.send({ hi: 'te' });
-  });
-  done();
+const apiRoute: FastifyPluginAsync = async (fastify: FastifyInstance) => {
+  fastify.register(v1Route, { prefix: '/v1' });
 };
 
 export default apiRoute;
