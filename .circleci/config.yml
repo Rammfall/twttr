@@ -30,7 +30,9 @@ jobs:
 #      - attach_workspace:
 #          at: ./application
       - run:
-          command: npm ci
+          command: |
+            cd application
+            npm ci
           name: Installing dependencies
 
 workflows:
