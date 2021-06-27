@@ -14,6 +14,20 @@ on:
 #    paths:
 #      - 'application/**'
 
+env:
+  CI: true
+  TYPEORM_CONNECTION: postgres
+  TYPEORM_HOST: localhost
+  TYPEORM_USERNAME: postgres
+  TYPEORM_PASSWORD: postgres
+  TYPEORM_DATABASE: postgres
+  TYPEORM_PORT: 5555
+  TYPEORM_SYNCHRONIZE: true
+  TYPEORM_LOGGING: true
+  TYPEORM_MIGRATIONS_DIR: src/db/migration/
+  TYPEORM_MIGRATIONS: src/db/migration/**/*.ts
+  TYPEORM_ENTITIES: src/db/entity/**/*.ts
+
 jobs:
   build:
     name: Build and test
@@ -42,20 +56,6 @@ jobs:
       - name: Build application
         run: npm run build
       - name: Run db migrations
-        env: &env
-          CI: true
-          TYPEORM_CONNECTION: postgres
-          TYPEORM_HOST: localhost
-          TYPEORM_USERNAME: postgres
-          TYPEORM_PASSWORD: postgres
-          TYPEORM_DATABASE: postgres
-          TYPEORM_PORT: 5555
-          TYPEORM_SYNCHRONIZE: true
-          TYPEORM_LOGGING: true
-          TYPEORM_MIGRATIONS_DIR: src/db/migration/
-          TYPEORM_MIGRATIONS: src/db/migration/**/*.ts
-          TYPEORM_ENTITIES: src/db/entity/**/*.ts
         run: npm run db:migrate
       - name: Run tests
-        env: *env
         run: npm run coverage
