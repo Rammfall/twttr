@@ -12,9 +12,9 @@ trigger:
       - feature/*
       - bugfix/*
       - hotfix/*
-  paths:
-    include:
-      - application/*
+#  paths:
+#    include:
+#      - application/*
 
 pool:
   vmImage: 'ubuntu-latest'
