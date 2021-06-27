@@ -28,9 +28,7 @@ jobs:
     steps:
       - checkout
       - run:
-          command: |
-            cd application
-            npm ci
+          command: npm ci
           name: Installing dependencies
 
 workflows:
