@@ -24,8 +24,8 @@ jobs:
   serverApplication:
     executor: node
     steps:
-      - deps:
-          run: npm ci
+      - run:
+          command: npm ci
           name: Installing dependencies
 
 workflows:
