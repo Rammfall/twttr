@@ -27,7 +27,7 @@ jobs:
     steps:
       - checkout
       - run:
-          comand: cd application
+          command: cd application
       - run:
           command: npm ci
           name: Installing dependencies
