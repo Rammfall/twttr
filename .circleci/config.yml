@@ -13,6 +13,9 @@ on:
   schedule:
     - cron: '* 0 * * *'
 
+orbs:
+  cypress: cypress-io/cypress@1.28.0
+
 executors:
   node:
     working_directory: ~/twttr
@@ -119,16 +122,8 @@ jobs:
     executor: node
     steps:
       - checkout
-      - run:
-          command: |
-            cd web-client
-            npm ci
-          name: Installing dependencies
-      - run:
-          command: |
-            cd web-client
-            npm run test:cypress:run
-          name: Running tests
+      - cypress/run:
+          working_directory: web-client
 
 workflows:
   build:
