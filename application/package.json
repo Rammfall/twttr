@@ -32,7 +32,7 @@
   "homepage": "https://github.com/Rammfall/twttr#readme",
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
-    "@types/bcrypt": "^3.0.1",
+    "@types/bcrypt": "^5.0.0",
     "@types/jest": "^26.0.23",
     "@types/node": "^15.12.5",
     "@types/validator": "^13.1.3",
