@@ -14,7 +14,7 @@
     "build": "tsc",
     "start": "node -r tsconfig-paths/register dist/index.js",
     "start:dev": "nodemon",
-    "linter:js": "eslint src/"
+    "linter:js": "eslint src/ --max-warnings 0"
   },
   "keywords": [
     "nodejs",

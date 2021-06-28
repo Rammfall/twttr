@@ -10,8 +10,6 @@ on:
       - 'feature/**'
       - 'bugfix/**'
       - 'hotfix/**'
-    paths:
-      - 'src/**'
   schedule:
     - cron: '* 0 * * *'
 
@@ -20,18 +18,78 @@ executors:
     working_directory: ~/twttr
     docker:
       - image: circleci/node:14.16.1
+      - image: circleci/postgres:12-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: password
 
 jobs:
-  serverApplication:
+  serverTest:
     executor: node
-    working_directory: ~/twttr/application
+    environment: &envs
+      CI: true
+      TYPEORM_CONNECTION: postgres
+      TYPEORM_HOST: localhost
+      TYPEORM_USERNAME: postgres
+      TYPEORM_PASSWORD: postgres
+      TYPEORM_DATABASE: postgres
+      TYPEORM_PORT: 5432
+      TYPEORM_SYNCHRONIZE: true
+      TYPEORM_LOGGING: true
+      TYPEORM_MIGRATIONS_DIR: src/db/migration/
+      TYPEORM_MIGRATIONS: src/db/migration/**/*.ts
+      TYPEORM_ENTITIES: src/db/entity/**/*.ts
     steps:
       - checkout
       - run:
-          command: npm ci
+          command: |
+            cd application
+            npm ci
           name: Installing dependencies
+      - run:
+          command: |
+            cd application
+            npm run test:coverage
+          name: Running tests
+  serverBuild:
+    executor: node
+    environment: *envs
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd application
+            npm ci
+          name: Installing dependencies
+      - run:
+          command: |
+            cd application
+            npm run build
+          name: Running build
+  serverLinters:
+    executor: node
+    environment: *envs
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd application
+            npm ci
+          name: Installing dependencies
+      - run:
+          command: |
+            cd application
+            npm run linter:js
+          name: Running build
 
 workflows:
-  build:
+  serverBuild:
     jobs:
-      - serverApplication
+      - serverBuild
+      - serverLinters
+          requires:
+            - serverBuild
+      - serverTest
+          requires:
+            - serverBuild
