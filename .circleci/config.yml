@@ -87,9 +87,9 @@ workflows:
   serverBuild:
     jobs:
       - serverBuild
-      - serverLinters
+      - serverLinters:
           requires:
             - serverBuild
-      - serverTest
+      - serverTest:
           requires:
             - serverBuild
