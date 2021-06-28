@@ -115,6 +115,20 @@ jobs:
             cd web-client
             npm run test:coverage
           name: Running tests
+  e2e:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd web-client
+            npm ci
+          name: Installing dependencies
+      - run:
+          command: |
+            cd web-client
+            npm run test:cypress:run
+          name: Running tests
 
 workflows:
   build:
@@ -130,3 +144,7 @@ workflows:
       - clientTests:
           requires:
             - clientBuild
+      - e2e:
+          requires:
+            - clientTests
+            - serverTest

@@ -6,6 +6,8 @@
   "scripts": {
     "test": "jest",
     "test:coverage": "jest --coverage",
+    "test:cypress:open": "cypress open",
+    "test:cypress:run": "cypress run",
     "dev": "next dev",
     "build": "next build",
     "start": "next start -p 4000"
@@ -30,6 +32,12 @@
     "react-dom": "^17.0.2"
   },
   "devDependencies": {
+    "cypress": "^7.6.0",
     "jest": "^27.0.5"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "cypress/"
+    ]
   }
 }
