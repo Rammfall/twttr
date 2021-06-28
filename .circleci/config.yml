@@ -117,7 +117,7 @@ jobs:
           name: Running tests
 
 workflows:
-  serverBuild:
+  build:
     jobs:
       - serverBuild
       - clientBuild
