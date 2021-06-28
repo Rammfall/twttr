@@ -1,5 +1,4 @@
 import { FastifyPluginAsync, FastifyInstance } from 'fastify';
-import Ajv from 'ajv';
 
 import validator from 'validator';
 
