@@ -50,6 +50,11 @@ jobs:
       - run:
           command: |
             cd application
+            npm run db:migrate
+          name: DB migration
+      - run:
+          command: |
+            cd application
             npm run test:coverage
           name: Running tests
   serverBuild:
@@ -82,14 +87,46 @@ jobs:
             cd application
             npm run linter:js
           name: Running build
+  clientBuild:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd web-client
+            npm ci
+          name: Installing dependencies
+      - run:
+          command: |
+            cd web-client
+            npm run build
+          name: Running build
+  clientTests:
+    executor: node
+    steps:
+      - checkout
+      - run:
+          command: |
+            cd web-client
+            npm ci
+          name: Installing dependencies
+      - run:
+          command: |
+            cd web-client
+            npm run test:coverage
+          name: Running tests
 
 workflows:
   serverBuild:
     jobs:
       - serverBuild
+      - clientBuild
       - serverLinters:
           requires:
             - serverBuild
       - serverTest:
           requires:
             - serverBuild
+      - clientTests:
+          requires:
+            - clientBuild
