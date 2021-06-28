@@ -5,26 +5,7 @@ import validator from 'validator';
 
 import createUser from 'controllers/user/create';
 
-const ajv = new Ajv({
-  removeAdditional: true,
-  useDefaults: true,
-  coerceTypes: 'array',
-  nullable: true,
-  allErrors: true,
-});
-ajv.addFormat('username', {
-  type: 'string',
-  validate: (str) => validator.isAlphanumeric(str),
-});
-ajv.addFormat('password', {
-  type: 'string',
-  validate: (str) => validator.isStrongPassword(str),
-});
-
 const userRoute: FastifyPluginAsync = async (fastify: FastifyInstance) => {
-  fastify.setValidatorCompiler(({ schema }) => {
-    return ajv.compile(schema);
-  });
   fastify.addSchema({
     $id: 'createUser',
     type: 'object',
