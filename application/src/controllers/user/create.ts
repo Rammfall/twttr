@@ -13,6 +13,8 @@ const createUser = async (
     body: { username, email, password },
   } = request;
 
+  console.log(request.body);
+
   if ((await UserAccount.find({ username })).length) {
     return reply.status(403).send({ info: 'username already exist' });
   }
