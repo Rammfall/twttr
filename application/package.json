@@ -55,7 +55,7 @@
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "fastify": "^3.19.0",
-    "fastify-formbody": "^5.0.0",
+    "fastify-formbody": "^5.1.0",
     "fastify-plugin": "^3.0.0",
     "pg": "^8.6.0",
     "reflect-metadata": "^0.1.13",
