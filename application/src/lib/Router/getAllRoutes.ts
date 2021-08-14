@@ -1,4 +1,4 @@
-import fs from 'fs';
+import { readdirSync, statSync } from 'fs';
 import { join } from 'path';
 
 function getAllRoutes(
@@ -6,11 +6,11 @@ function getAllRoutes(
   arr: string[] = [],
   rootDir = dir
 ): string[] {
-  const result = fs.readdirSync(dir);
+  const result = readdirSync(dir);
 
   result.map((part: string) => {
     const absolutePath = join(dir, part);
-    const pathStat = fs.statSync(absolutePath);
+    const pathStat = statSync(absolutePath);
 
     if (pathStat.isDirectory()) {
       getAllRoutes(absolutePath, arr, rootDir);

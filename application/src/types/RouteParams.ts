@@ -116,7 +116,7 @@ export interface HttpResult {
   headers?: ParamsObject;
 }
 
-interface Handler {
+export interface Handler {
   (handlerArguments: HandlerArguments): Promise<HttpResult>;
 }
 

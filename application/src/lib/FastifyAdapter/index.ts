@@ -3,17 +3,28 @@ import Fastify, {
   FastifyReply,
   FastifyRequest,
 } from 'fastify';
-import Ajv from 'ajv';
+import Ajv, { JSONSchemaType } from 'ajv';
 
 const ajv = new Ajv();
 
-const schema = {
+interface appData {
+  foo: number;
+  bar: string;
+}
+
+const schema: JSONSchemaType<appData> = {
   type: 'object',
   properties: {
     foo: { type: 'integer' },
     bar: { type: 'string' },
   },
+  required: ['foo'],
+  additionalProperties: false,
 };
+
+const validate = ajv.compile(schema);
+
+console.log(validate({ foo: '2', bar: 'dg' }));
 
 import { RouteParams } from 'types/RouteParams';
 import { PreparedRoute } from '../Router/prepareRoutes';
@@ -39,41 +50,49 @@ class FastifyAdapter {
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
       const currentRoute: { default: RouteParams[] } = await import(importPath);
+      if (currentRoute.default.length) {
+        currentRoute.default.forEach(
+          ({ handler, schema, hooks = [], method }) => {
+            this.server.route({
+              method,
+              url: path,
+              handler: async (request: FastifyRequest, reply: FastifyReply) => {
+                const { body, params, headers, cookies, query } = request;
 
-      currentRoute.default.forEach(({ handler, schema, hooks, method }) => {
-        this.server.route({
-          method,
-          url: path,
-          handler: async (request: FastifyRequest, reply: FastifyReply) => {
-            const { body, params, headers, cookies, query } = request;
+                const hooksResult = hooks.every((func) =>
+                  // @ts-ignore
+                  func({ params, cookies, body, headers, query })
+                );
 
-            const hooksResult = hooks.every((func) =>
-              // @ts-ignore
-              func({ params, cookies, body, headers, query })
-            );
+                if (!hooksResult) {
+                  reply.status(400).send();
+                  return;
+                }
 
-            if (!hooksResult) {
-              reply.status(400).send();
-              return;
-            }
+                const res = await handler({
+                  // @ts-ignore
+                  body,
+                  // @ts-ignore
+                  params,
+                  // @ts-ignore
+                  headers,
+                  // @ts-ignore
+                  cookies,
+                  // @ts-ignore
+                  query,
+                });
 
-            const res = await handler({
-              // @ts-ignore
-              body,
-              // @ts-ignore
-              params,
-              // @ts-ignore
-              headers,
-              // @ts-ignore
-              cookies,
-              // @ts-ignore
-              query,
+                reply.status(res.status).send(res.body);
+              },
             });
-
-            reply.status(res.status).send(res.body);
-          },
+          }
+        );
+      } else {
+        console.error({
+          path: importPath,
+          msg: `Please, check ${importPath}. It should be array of objects.`,
         });
-      });
+      }
     });
   };
 

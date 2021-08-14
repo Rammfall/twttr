@@ -1,22 +1,39 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
 import { hash } from 'bcrypt';
 
-import UserAccount, { Roles } from '../../db/entity/UserAccount';
+import {
+  HandlerArguments,
+  HttpResult,
+  httpStatusCodes,
+} from 'types/RouteParams';
+import UserAccount, { Roles } from 'db/entity/UserAccount';
 
-const createUser = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<void> => {
-  const {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    body: { username, email, password },
-  } = request;
+interface Params extends HandlerArguments {
+  body: {
+    username: string;
+    email: string;
+    password: string;
+  };
+}
 
-  console.log(request.body);
-
+const createUser = async ({
+  body: { username, email, password },
+}: Params): Promise<HttpResult> => {
   if ((await UserAccount.find({ username })).length) {
-    return reply.status(403).send({ info: 'username already exist' });
+    return {
+      status: httpStatusCodes.Forbidden,
+      body: {
+        info: 'username already exist',
+      },
+    };
+  }
+
+  if ((await UserAccount.find({ email })).length) {
+    return {
+      status: httpStatusCodes.Forbidden,
+      body: {
+        info: 'email already exist',
+      },
+    };
   }
 
   const user = new UserAccount();
@@ -27,7 +44,12 @@ const createUser = async (
 
   await user.save();
 
-  return reply.send({ info: 'cool' });
+  return {
+    status: httpStatusCodes.Success,
+    body: {
+      info: 'User was created',
+    },
+  };
 };
 
 export default createUser;

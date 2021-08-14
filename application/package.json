@@ -45,6 +45,7 @@
     "jest": "^27.0.6",
     "nodemon": "^2.0.10",
     "prettier": "^2.3.2",
+    "ts-jest": "^27.0.3",
     "ts-node": "^10.0.0",
     "typescript": "^4.3.5"
   },
@@ -52,6 +53,7 @@
     "@sentry/node": "^6.8.0",
     "@sentry/tracing": "^6.3.5",
     "ajv": "^8.6.1",
+    "ajv-formats": "^2.1.1",
     "bcrypt": "^5.0.1",
     "dotenv": "^10.0.0",
     "fastify": "^3.19.0",
@@ -66,11 +68,11 @@
   },
   "volta": {
     "node": "14.16.1",
-    "npm": "7.11.2"
+    "npm": "7.20.6"
   },
   "engines": {
     "node": "14.16.1",
-    "npm": "7.11.2"
+    "npm": "7.20.6"
   },
   "nodemonConfig": {
     "ignore": [
