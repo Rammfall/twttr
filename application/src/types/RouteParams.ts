@@ -1,4 +1,5 @@
-import { Schema } from 'ajv';
+import { Schema, SchemaObject } from 'ajv';
+import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
 
 export enum httpMethods {
   'GET' = 'GET',
@@ -89,8 +90,8 @@ interface Query {
   [query: string]: string | string[];
 }
 
-interface Body {
-  [item: string]: unknown;
+interface Body<T = string> {
+  [item: string]: T;
 }
 
 interface Cookie {
@@ -101,32 +102,30 @@ interface Cookie {
   remove?: boolean;
 }
 
-export interface HandlerArguments {
+export interface HandlerArguments<Body> {
+  body: Body;
   params: ParamsObject;
   cookies: Cookie[];
   headers: ParamsObject;
   query: Query;
-  body: Body;
 }
 
 export interface HttpResult {
   status: httpStatusCodes;
-  body?: Body;
+  body?: unknown;
   cookies?: Cookie[];
   headers?: ParamsObject;
 }
 
-export interface Handler {
-  (handlerArguments: HandlerArguments): Promise<HttpResult>;
-}
+export type Handler = (
+  handlerArgs: HandlerArguments<never>
+) => Promise<HttpResult>;
 
-interface Hook {
-  (hookArguments: HandlerArguments): boolean;
-}
+export type Hook = (hookArguments: HandlerArguments<never>) => boolean;
 
 export interface RouteParams {
   handler: Handler;
-  schema: Schema;
+  schema: SomeJSONSchema;
   method: httpMethods;
-  hooks: Hook[];
+  hooks?: Hook[];
 }

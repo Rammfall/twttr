@@ -3,32 +3,11 @@ import Fastify, {
   FastifyReply,
   FastifyRequest,
 } from 'fastify';
-import Ajv, { JSONSchemaType } from 'ajv';
 
-const ajv = new Ajv();
-
-interface appData {
-  foo: number;
-  bar: string;
-}
-
-const schema: JSONSchemaType<appData> = {
-  type: 'object',
-  properties: {
-    foo: { type: 'integer' },
-    bar: { type: 'string' },
-  },
-  required: ['foo'],
-  additionalProperties: false,
-};
-
-const validate = ajv.compile(schema);
-
-console.log(validate({ foo: '2', bar: 'dg' }));
-
-import { RouteParams } from 'types/RouteParams';
-import { PreparedRoute } from '../Router/prepareRoutes';
-import { SERVER_ADDRESS } from '../../config/application';
+import { httpStatusCodes, RouteParams } from 'types/RouteParams';
+import { PreparedRoute } from 'lib/Router/prepareRoutes';
+import { SERVER_ADDRESS } from 'config/application';
+import { validate as validateCommon } from 'schemas/main';
 
 class FastifyAdapter {
   private server: FastifyInstance;
@@ -42,6 +21,17 @@ class FastifyAdapter {
     this.server.register(import('fastify-formbody'));
     this.server.register(import('fastify-cookie'), {
       secret: 'secret',
+    });
+    this.server.register(import('fastify-multipart'), {
+      limits: {
+        fieldNameSize: 1000000,
+        fieldSize: 1000000,
+        fields: 1000000,
+        fileSize: 1000000,
+        files: 10,
+        headerPairs: 1000000,
+      },
+      attachFieldsToBody: true,
     });
 
     this.prepareRoutes();
@@ -57,7 +47,43 @@ class FastifyAdapter {
               method,
               url: path,
               handler: async (request: FastifyRequest, reply: FastifyReply) => {
-                const { body, params, headers, cookies, query } = request;
+                const newBody = Object.fromEntries(
+                  // @ts-ignore
+                  Object.keys(request.body).map((key) => [
+                    key,
+                    // @ts-ignore
+                    request.body[key].value,
+                  ])
+                );
+
+                const {
+                  body: reqBody,
+                  params,
+                  headers,
+                  cookies,
+                  query,
+                } = request;
+                const validate = validateCommon(schema);
+                const body = {
+                  // @ts-ignore
+                  ...reqBody,
+                  ...newBody,
+                };
+
+                if (
+                  !validate({
+                    body,
+                    params,
+                    headers,
+                    cookies,
+                    query,
+                  })
+                ) {
+                  const { errors } = validate;
+                  return reply
+                    .status(httpStatusCodes.NotFound)
+                    .send({ errors });
+                }
 
                 const hooksResult = hooks.every((func) =>
                   // @ts-ignore

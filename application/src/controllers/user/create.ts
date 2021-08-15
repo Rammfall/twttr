@@ -1,55 +1,38 @@
-import { hash } from 'bcrypt';
-
 import {
   HandlerArguments,
   HttpResult,
   httpStatusCodes,
 } from 'types/RouteParams';
-import UserAccount, { Roles } from 'db/entity/UserAccount';
+import createUser from 'concepts/user/create';
 
-interface Params extends HandlerArguments {
-  body: {
-    username: string;
-    email: string;
-    password: string;
-  };
+interface Params {
+  username: string;
+  email: string;
+  password: string;
 }
 
-const createUser = async ({
+const createUserHandler = async ({
   body: { username, email, password },
-}: Params): Promise<HttpResult> => {
-  if ((await UserAccount.find({ username })).length) {
+}: HandlerArguments<Params>): Promise<HttpResult> => {
+  try {
+    const user = await createUser({ username, email, password });
+
+    return {
+      status: httpStatusCodes.Success,
+      body: {
+        username: user.username,
+        password: user.password,
+        email: user.email,
+      },
+    };
+  } catch (e) {
     return {
       status: httpStatusCodes.Forbidden,
       body: {
-        info: 'username already exist',
+        info: e.message,
       },
     };
   }
-
-  if ((await UserAccount.find({ email })).length) {
-    return {
-      status: httpStatusCodes.Forbidden,
-      body: {
-        info: 'email already exist',
-      },
-    };
-  }
-
-  const user = new UserAccount();
-  user.username = username;
-  user.role = Roles.user;
-  user.email = email;
-  user.password = await hash(password, 3);
-
-  await user.save();
-
-  return {
-    status: httpStatusCodes.Success,
-    body: {
-      info: 'User was created',
-    },
-  };
 };
 
-export default createUser;
+export default createUserHandler;

@@ -1,5 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
+import validationLength from 'constants/validations';
+
 export enum Roles {
   admin = 'admin',
   user = 'user',
@@ -15,7 +17,7 @@ class UserAccount extends BaseEntity {
 
   @Column({
     type: 'varchar',
-    length: 30,
+    length: validationLength.user.username.maxLength,
     nullable: false,
     unique: true,
   })
@@ -23,7 +25,7 @@ class UserAccount extends BaseEntity {
 
   @Column({
     type: 'varchar',
-    length: 320,
+    length: validationLength.user.email.maxLength,
     nullable: false,
   })
   email!: string;

@@ -5,7 +5,7 @@ import Core from 'lib/Core';
 
 dotenv.config();
 
-import { APPLICATION_PORT, SERVER_ADDRESS } from './config/application';
+import { APPLICATION_PORT } from './config/application';
 import db from './initializers/db';
 
 const coreApplication = new Core({ port: APPLICATION_PORT });

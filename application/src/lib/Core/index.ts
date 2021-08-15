@@ -1,9 +1,13 @@
-import FastifyAdapter from '../FastifyAdapter';
-import getAllRoutes from '../Router/getAllRoutes';
-import preparedRouting, { PreparedRoute } from '../Router/prepareRoutes';
+import cluster from 'cluster';
+import os from 'os';
+
+import FastifyAdapter from 'lib/FastifyAdapter';
+import getAllRoutes from 'lib/Router/getAllRoutes';
+import preparedRouting, { PreparedRoute } from 'lib/Router/prepareRoutes';
 
 interface CoreConfig {
   port?: number;
+  multiTread?: boolean;
 }
 
 class Core {
@@ -11,17 +15,35 @@ class Core {
   private readonly directory = 'src/routes';
   private readonly routes: string[];
   private readonly preparedRoutes: PreparedRoute[];
+  private readonly multiTread: boolean;
 
-  constructor({ port }: CoreConfig) {
+  constructor({ port, multiTread }: CoreConfig) {
     this.port = port || 3000;
+    this.multiTread = multiTread || false;
     this.routes = getAllRoutes(this.directory);
     this.preparedRoutes = preparedRouting(this.routes);
   }
 
-  start = async (): Promise<void> => {
+  private prepare = async (): Promise<void> => {
     const server = new FastifyAdapter({ routes: this.preparedRoutes });
 
     await server.start(this.port);
+  };
+
+  start = async (): Promise<void> => {
+    if (this.multiTread) {
+      if (cluster.isPrimary) {
+        const cpusCount = os.cpus();
+
+        cpusCount.forEach(() => {
+          cluster.fork();
+        });
+      } else {
+        await this.prepare();
+      }
+    } else {
+      await this.prepare();
+    }
   };
 }
 
