@@ -1,9 +1,6 @@
-/*
- * For a detailed explanation regarding each configuration property and type check, visit:
- * https://jestjs.io/docs/configuration
- */
+import type { Config } from '@jest/types';
 
-export default {
+const config: Config.InitialOptions = {
   // All imported modules in your tests should be mocked automatically
   // automock: false,
 
@@ -172,7 +169,7 @@ export default {
   // timers: "real",
 
   // A map from regular expressions to paths to transformers
-  // transform: undefined,
+  transform: { '\\.[jt]sx?$': 'ts-jest' },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   // transformIgnorePatterns: [
@@ -191,4 +188,7 @@ export default {
 
   // Whether to use watchman for file crawling
   // watchman: true,
+  verbose: true,
 };
+
+export default config;

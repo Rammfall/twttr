@@ -1,31 +1,40 @@
-import { FastifyReply, FastifyRequest } from 'fastify';
-import { hash } from 'bcrypt';
+import { Serializer, Error } from 'jsonapi-serializer';
 
-import UserAccount, { Roles } from '../../db/entity/UserAccount';
+import {
+  HandlerArguments,
+  HttpResult,
+  httpStatusCodes,
+} from 'types/RouteParams';
+import createUser from 'concepts/user/create';
 
-const createUser = async (
-  request: FastifyRequest,
-  reply: FastifyReply
-): Promise<void> => {
-  const {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    body: { username, email, password },
-  } = request;
+interface Params {
+  username: string;
+  email: string;
+  password: string;
+}
 
-  if ((await UserAccount.find({ username })).length) {
-    return reply.status(403).send({ info: 'username already exist' });
+const createUserHandler = async ({
+  body: { username, email, password },
+}: HandlerArguments<Params>): Promise<HttpResult> => {
+  try {
+    const user = await createUser({ username, email, password });
+
+    const UserSerializer = new Serializer('user', {
+      attributes: ['email', 'username', 'role'],
+    });
+
+    return {
+      status: httpStatusCodes.Success,
+      body: UserSerializer.serialize(user),
+    };
+  } catch ({ message }) {
+    return {
+      status: httpStatusCodes.Forbidden,
+      body: new Error({
+        title: typeof message === 'string' ? message : undefined,
+      }),
+    };
   }
-
-  const user = new UserAccount();
-  user.username = username;
-  user.role = Roles.user;
-  user.email = email;
-  user.password = await hash(password, 3);
-
-  await user.save();
-
-  return reply.send({ info: 'cool' });
 };
 
-export default createUser;
+export default createUserHandler;

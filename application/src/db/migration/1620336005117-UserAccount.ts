@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner, Table } from 'typeorm';
 
 export class UserAccount1620336005117 implements MigrationInterface {
-  tableName = 'UserAccount';
+  static tableName = 'UserAccount';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.createTable(
       new Table({
-        name: this.tableName,
+        name: UserAccount1620336005117.tableName,
         columns: [
           {
             name: 'id',
@@ -25,6 +25,7 @@ export class UserAccount1620336005117 implements MigrationInterface {
             type: 'varchar',
             length: '320',
             isNullable: false,
+            isUnique: true,
           },
           {
             name: 'password',
@@ -42,6 +43,6 @@ export class UserAccount1620336005117 implements MigrationInterface {
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.dropTable(this.tableName);
+    await queryRunner.dropTable(UserAccount1620336005117.tableName);
   }
 }

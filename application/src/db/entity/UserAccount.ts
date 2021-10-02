@@ -1,5 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 
+import validationLength from 'constants/validations';
+
+import { UserAccount1620336005117 } from '../migration/1620336005117-UserAccount';
+
 export enum Roles {
   admin = 'admin',
   user = 'user',
@@ -7,7 +11,7 @@ export enum Roles {
 }
 
 @Entity({
-  name: 'UserAccount',
+  name: UserAccount1620336005117.tableName,
 })
 class UserAccount extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -15,7 +19,7 @@ class UserAccount extends BaseEntity {
 
   @Column({
     type: 'varchar',
-    length: 30,
+    length: validationLength.user.username.maxLength,
     nullable: false,
     unique: true,
   })
@@ -23,7 +27,7 @@ class UserAccount extends BaseEntity {
 
   @Column({
     type: 'varchar',
-    length: 320,
+    length: validationLength.user.email.maxLength,
     nullable: false,
   })
   email!: string;
