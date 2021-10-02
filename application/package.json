@@ -59,7 +59,7 @@
     "fastify-plugin": "^3.0.0",
     "pg": "^8.7.1",
     "reflect-metadata": "^0.1.13",
-    "tsconfig-paths": "^3.10.1",
+    "tsconfig-paths": "^3.11.0",
     "typeorm": "^0.2.37",
     "yup": "^0.32.9"
   },
