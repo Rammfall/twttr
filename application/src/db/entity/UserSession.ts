@@ -43,7 +43,7 @@ class UserSession extends BaseEntity {
     type: 'timestamp',
     nullable: false,
   })
-  expiredDate!: Date;
+  expiredDate!: Date | string;
 
   @Column({
     type: 'varchar',

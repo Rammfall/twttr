@@ -1,7 +1,7 @@
 import { httpMethods, RouteParams } from 'types/RouteParams';
-import refreshSessionHandler from 'controllers/user/session/refresh';
+import refreshSessionHandler from '../../../../../controllers/user/session/refresh';
 
-const refresh: RouteParams[] = [
+const end: RouteParams[] = [
   {
     schema: {
       $id: 'validation/schemas/refreshSession.json',
@@ -20,4 +20,4 @@ const refresh: RouteParams[] = [
   },
 ];
 
-export default refresh;
+export default end;

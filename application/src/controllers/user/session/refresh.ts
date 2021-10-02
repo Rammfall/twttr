@@ -1,40 +1,24 @@
 import { Error, Serializer } from 'jsonapi-serializer';
-
 import {
   CookieAction,
   HandlerArguments,
   HttpResult,
   httpStatusCodes,
 } from 'types/RouteParams';
-import createSession from 'concepts/user/session/create';
-import UserAccount from '../../../db/entity/UserAccount';
+import refreshSession from '../../../concepts/user/session/refresh';
 
 interface Params {
-  username: string;
-  email: string;
-  password: string;
+  refreshToken: string;
 }
 
-const createSessionHandler = async ({
-  body: { username, password },
-  headers: { 'user-agent': device },
-  payload: { ip },
-  cookies,
+const refreshSessionHandler = async ({
+  cookies: { refreshToken },
 }: HandlerArguments<Params>): Promise<HttpResult> => {
   try {
-    console.log(cookies);
-    const session = await createSession({
-      username,
-      password,
-      device,
-      ip,
-    });
+    const session = await refreshSession({ refreshToken });
+
     const SessionSerializer = new Serializer('session', {
-      attributes: ['accessToken', 'refreshToken', 'user', 'sessionId'],
-      user: {
-        ref: (_: undefined, user: UserAccount) => user.id,
-        attributes: ['username', 'email', 'role'],
-      },
+      attributes: ['refreshToken', 'accessToken', 'sessionId'],
     });
 
     return {
@@ -61,4 +45,4 @@ const createSessionHandler = async ({
   }
 };
 
-export default createSessionHandler;
+export default refreshSessionHandler;

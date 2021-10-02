@@ -33,6 +33,7 @@ class FastifyAdapter {
       },
       attachFieldsToBody: true,
     });
+    this.server.register(import('fastify-cors'), {});
 
     this.prepareRoutes();
   }
@@ -40,7 +41,7 @@ class FastifyAdapter {
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
       const currentRoute: { default: RouteParams[] } = await import(importPath);
-      if (currentRoute.default.length) {
+      if (currentRoute.default?.length) {
         currentRoute.default.forEach(
           ({ handler, schema, hooks = [], method }) => {
             this.server.route({
@@ -67,9 +68,20 @@ class FastifyAdapter {
                   body: reqBody,
                   params,
                   headers,
-                  cookies,
+                  cookies: requestCookies,
                   query,
                 } = request;
+                const cookies: { [param: string]: string } = {};
+
+                if (requestCookies) {
+                  for (const [key, value] of Object.entries(requestCookies)) {
+                    const cookie = request.unsignCookie(value);
+
+                    if (cookie) {
+                      cookies[key] = request.unsignCookie(value).value || '';
+                    }
+                  }
+                }
                 const validate = validateCommon(schema);
                 const body = isMultipart ? newBody : reqBody;
 
@@ -113,6 +125,17 @@ class FastifyAdapter {
                     ip: request.ip,
                   },
                 });
+
+                if (res.cookies) {
+                  for (const [key, { value, action }] of Object.entries(
+                    res.cookies
+                  )) {
+                    reply[action](key, value, {
+                      httpOnly: true,
+                      signed: true,
+                    });
+                  }
+                }
 
                 reply.status(res.status).send(res.body);
               },

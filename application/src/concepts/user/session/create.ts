@@ -1,7 +1,7 @@
 import { sign } from 'jsonwebtoken';
 import { compare } from 'bcrypt';
-import { nanoid } from 'nanoid';
 import { v4 } from 'uuid';
+import { add } from 'date-fns';
 
 import UserSession from 'db/entity/UserSession';
 import { LOGIN_ACCESS_SECRET } from 'config/application';
@@ -43,7 +43,9 @@ const createSession = async ({
     session.sessionId = v4();
     session.device = device;
     session.user = user;
-    session.expiredDate = new Date(+new Date() + LOGIN_REFRESH_EXPIRES);
+    session.expiredDate = add(new Date(), {
+      days: LOGIN_REFRESH_EXPIRES,
+    }).toISOString();
     session.ip = ip;
 
     await session.save();

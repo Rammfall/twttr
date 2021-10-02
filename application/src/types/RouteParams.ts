@@ -94,18 +94,10 @@ interface Body<T = string> {
   [item: string]: T;
 }
 
-interface Cookie {
-  key: string;
-  value: string;
-  time: Date;
-  httpOnly: boolean;
-  remove?: boolean;
-}
-
 export interface HandlerArguments<Body> {
   body: Body;
   params: ParamsObject;
-  cookies: Cookie[];
+  cookies: Body;
   headers: ParamsObject;
   query: Query;
   payload: ParamsObject;
@@ -114,7 +106,7 @@ export interface HandlerArguments<Body> {
 export interface HttpResult {
   status: httpStatusCodes;
   body?: unknown;
-  cookies?: Cookie[];
+  cookies?: Cookie;
   headers?: ParamsObject;
 }
 
@@ -129,4 +121,16 @@ export interface RouteParams {
   schema: SomeJSONSchema;
   method: httpMethods;
   hooks?: Hook[];
+}
+
+export enum CookieAction {
+  remove = 'clearCookie',
+  add = 'setCookie',
+}
+
+interface Cookie {
+  [param: string]: {
+    value: string;
+    action: CookieAction;
+  };
 }
