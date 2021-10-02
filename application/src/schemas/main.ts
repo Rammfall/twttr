@@ -23,6 +23,7 @@ export const mainSchema: Schema = {
           format: 'email',
         },
         password: {
+          type: 'string',
           minLength: validationLength.user.password.minLength,
           maxLength: validationLength.user.password.maxLength,
           format: 'password',

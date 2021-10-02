@@ -3,7 +3,7 @@ import {
   HttpResult,
   httpStatusCodes,
 } from 'types/RouteParams';
-import createUser from 'concepts/user/create';
+import createSession from 'concepts/user/session/create';
 
 interface Params {
   username: string;
@@ -11,17 +11,24 @@ interface Params {
   password: string;
 }
 
-const createUserHandler = async ({
-  body: { username, email, password },
+const createSessionHandler = async ({
+  body: { username, password },
+  headers: { 'user-agent': device },
+  payload: { ip },
 }: HandlerArguments<Params>): Promise<HttpResult> => {
   try {
-    const user = await createUser({ username, email, password });
+    const session = await createSession({
+      username,
+      password,
+      device,
+      ip,
+    });
 
     return {
       status: httpStatusCodes.Success,
       body: {
-        username: user.username,
-        email: user.email,
+        accessToken: session.accessToken,
+        refreshToken: session.refreshToken,
       },
     };
   } catch (e) {
@@ -34,4 +41,4 @@ const createUserHandler = async ({
   }
 };
 
-export default createUserHandler;
+export default createSessionHandler;

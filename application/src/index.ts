@@ -1,9 +1,6 @@
-import dotenv from 'dotenv';
 import 'reflect-metadata';
 
 import Core from 'lib/Core';
-
-dotenv.config();
 
 import { APPLICATION_PORT } from './config/application';
 import db from './initializers/db';

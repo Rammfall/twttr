@@ -47,13 +47,20 @@ class FastifyAdapter {
               method,
               url: path,
               handler: async (request: FastifyRequest, reply: FastifyReply) => {
+                let isMultipart = true;
                 const newBody = Object.fromEntries(
                   // @ts-ignore
-                  Object.keys(request.body).map((key) => [
-                    key,
+                  Object.keys(request.body).map((key) => {
                     // @ts-ignore
-                    request.body[key].value,
-                  ])
+                    if (request.body[key].value === undefined) {
+                      isMultipart = false;
+                    }
+                    return [
+                      key,
+                      // @ts-ignore
+                      request.body[key].value,
+                    ];
+                  })
                 );
 
                 const {
@@ -64,11 +71,7 @@ class FastifyAdapter {
                   query,
                 } = request;
                 const validate = validateCommon(schema);
-                const body = {
-                  // @ts-ignore
-                  ...reqBody,
-                  ...newBody,
-                };
+                const body = isMultipart ? newBody : reqBody;
 
                 if (
                   !validate({
@@ -106,6 +109,9 @@ class FastifyAdapter {
                   cookies,
                   // @ts-ignore
                   query,
+                  payload: {
+                    ip: request.ip,
+                  },
                 });
 
                 reply.status(res.status).send(res.body);

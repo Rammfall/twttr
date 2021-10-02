@@ -13,7 +13,11 @@ const createUser = async ({
   password: string;
 }): Promise<UserAccount> => {
   if ((await UserAccount.find({ username })).length) {
-    throw new Error(userMessages.exist);
+    throw new Error(userMessages.existUsername);
+  }
+
+  if ((await UserAccount.find({ email })).length) {
+    throw new Error(userMessages.existEmail);
   }
 
   const user = new UserAccount();

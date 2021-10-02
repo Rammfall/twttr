@@ -13,6 +13,14 @@ const validationLength = {
       maxLength: 60,
     },
   },
+  session: {
+    device: {
+      maxLength: 30,
+    },
+    ip: {
+      maxLength: 30,
+    },
+  },
 };
 
 export default validationLength;

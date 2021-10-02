@@ -108,6 +108,7 @@ export interface HandlerArguments<Body> {
   cookies: Cookie[];
   headers: ParamsObject;
   query: Query;
+  payload: ParamsObject;
 }
 
 export interface HttpResult {
