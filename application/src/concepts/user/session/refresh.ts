@@ -1,11 +1,11 @@
 import { v4 } from 'uuid';
-import { isAfter } from 'date-fns';
 import { sign } from 'jsonwebtoken';
 
 import UserSession from 'db/entity/UserSession';
 import { userMessages } from 'constants/messages';
 import { LOGIN_ACCESS_SECRET } from 'config/application';
 import { LOGIN_ACCESS_EXPIRES } from './constants';
+import { isSessionExpired } from './shared/isSessionExpired';
 
 const refreshSession = async ({
   refreshToken,
@@ -20,7 +20,7 @@ const refreshSession = async ({
   if (session) {
     const expiredDate = new Date(session.expiredDate);
 
-    if (isAfter(expiredDate, new Date())) {
+    if (isSessionExpired(expiredDate)) {
       const { username, email } = session.user;
 
       session.refreshToken = v4();

@@ -52,6 +52,14 @@ export class UserSession1629023006862 implements MigrationInterface {
             length: '30',
             isNullable: false,
           },
+          {
+            name: 'createdAt',
+            type: 'timestamp',
+          },
+          {
+            name: 'updatedAt',
+            type: 'timestamp',
+          },
         ],
       })
     );

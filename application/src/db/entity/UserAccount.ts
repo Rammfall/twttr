@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  BaseEntity,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import validationLength from 'constants/validations';
 
@@ -43,6 +50,19 @@ class UserAccount extends BaseEntity {
     enum: ['admin', 'user', 'owner'],
   })
   role!: Roles;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'NOW()',
+  })
+  createdAt!: Date;
+
+  @UpdateDateColumn({
+    type: 'timestamp',
+    default: () => 'NOW()',
+    onUpdate: 'NOW()',
+  })
+  updatedAt!: Date;
 }
 
 export default UserAccount;

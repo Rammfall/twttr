@@ -1,5 +1,5 @@
 import { httpMethods, RouteParams } from 'types/RouteParams';
-import refreshSessionHandler from '../../../../../controllers/user/session/refresh';
+import endSessionHandler from 'controllers/user/session/end';
 
 const end: RouteParams[] = [
   {
@@ -16,7 +16,7 @@ const end: RouteParams[] = [
       required: ['cookies'],
     },
     method: httpMethods.POST,
-    handler: refreshSessionHandler,
+    handler: endSessionHandler,
   },
 ];
 

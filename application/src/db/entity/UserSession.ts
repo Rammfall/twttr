@@ -1,4 +1,12 @@
-import { Entity, Column, PrimaryColumn, BaseEntity, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryColumn,
+  BaseEntity,
+  ManyToOne,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 import { UserSession1629023006862 } from '../migration/1629023006862-UserSession';
 import validationLength from '../../constants/validations';
@@ -61,6 +69,12 @@ class UserSession extends BaseEntity {
     onUpdate: 'CASCADE',
   })
   user!: UserAccount;
+
+  @CreateDateColumn()
+  createdAt!: Date;
+
+  @UpdateDateColumn()
+  updatedAt!: Date;
 }
 
 export default UserSession;

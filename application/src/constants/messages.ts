@@ -5,4 +5,5 @@ export const userMessages = {
   userNotFound: 'User not found',
   sessionNotFound: 'Session not found',
   refreshExpired: 'Refresh was expired',
+  unauthorized: 'Unauthorized, go to refresh:)',
 };

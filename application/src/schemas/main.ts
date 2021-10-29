@@ -3,7 +3,6 @@ import addFormats from 'ajv-formats';
 import validator from 'validator';
 
 import validationLength from 'constants/validations';
-import { v4 } from 'uuid';
 
 export const mainSchema: Schema = {
   $id: 'validation/schemas/main.json',
