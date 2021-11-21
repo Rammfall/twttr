@@ -55,10 +55,13 @@ export class UserSession1629023006862 implements MigrationInterface {
           {
             name: 'createdAt',
             type: 'timestamp',
+            default: 'NOW()',
           },
           {
             name: 'updatedAt',
             type: 'timestamp',
+            default: 'NOW()',
+            onUpdate: 'NOW()',
           },
         ],
       })

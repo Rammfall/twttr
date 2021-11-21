@@ -20,6 +20,7 @@ const authCheck = async ({
 }: HandlerArguments<Params>): Promise<
   | {
       result: true;
+      payload: unknown;
     }
   | {
       result: false;
@@ -34,6 +35,9 @@ const authCheck = async ({
 
       return {
         result: true,
+        payload: {
+          refreshToken,
+        },
       };
     } catch (error) {
       return {

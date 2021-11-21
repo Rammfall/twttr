@@ -97,6 +97,37 @@ class FastifyAdapter {
                     .send({ errors });
                 }
 
+                let actionsPayload: { [key: string]: unknown } = {};
+
+                const works = actions?.every(async (item) => {
+                  const result = await this.actions[item]({
+                    // @ts-ignore
+                    body,
+                    // @ts-ignore
+                    params,
+                    // @ts-ignore
+                    headers,
+                    // @ts-ignore
+                    cookies,
+                    // @ts-ignore
+                    query,
+                    payload: {
+                      ip: request.ip,
+                    },
+                  });
+
+                  if (!result.result) {
+                    reply.status(result.reply.status).send(result.reply.body);
+
+                    return false;
+                  }
+
+                  // @ts-ignore
+                  actionsPayload = { actionsPayload, ...result.payload };
+                });
+
+                console.log(works, actionsPayload);
+
                 const res = await handler({
                   // @ts-ignore
                   body,
@@ -111,6 +142,7 @@ class FastifyAdapter {
                   payload: {
                     ip: request.ip,
                   },
+                  actionsPayload,
                 });
 
                 if (res.cookies) {

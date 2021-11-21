@@ -40,10 +40,13 @@ export class UserAccount1620336005117 implements MigrationInterface {
           {
             name: 'createdAt',
             type: 'timestamp',
+            default: 'NOW()',
           },
           {
             name: 'updatedAt',
             type: 'timestamp',
+            default: 'NOW()',
+            onUpdate: 'NOW()',
           },
         ],
       })

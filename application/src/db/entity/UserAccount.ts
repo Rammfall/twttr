@@ -53,14 +53,16 @@ class UserAccount extends BaseEntity {
 
   @CreateDateColumn({
     type: 'timestamp',
-    default: () => 'NOW()',
+    default: 'NOW()',
+    nullable: false,
   })
   createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
-    default: () => 'NOW()',
+    default: 'NOW();',
     onUpdate: 'NOW()',
+    nullable: false,
   })
   updatedAt!: Date;
 }

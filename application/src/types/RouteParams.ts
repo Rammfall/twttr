@@ -102,7 +102,9 @@ export interface HandlerArguments<Body> {
   headers: ParamsObject;
   query: Query;
   payload: ParamsObject;
-  actionsPayload: unknown;
+  actionsPayload: {
+    [key: string]: unknown;
+  };
 }
 
 export interface HttpResult {
