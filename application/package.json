@@ -60,7 +60,7 @@
     "bcrypt": "^5.0.1",
     "date-fns": "^2.28.0",
     "dotenv": "^10.0.0",
-    "fastify": "^3.22.1",
+    "fastify": "^3.25.3",
     "fastify-cookie": "^5.3.1",
     "fastify-cors": "^6.0.2",
     "fastify-formbody": "^5.1.0",
