@@ -63,7 +63,7 @@
     "fastify": "^3.25.3",
     "fastify-cookie": "^5.3.1",
     "fastify-cors": "^6.0.2",
-    "fastify-formbody": "^5.1.0",
+    "fastify-formbody": "^5.2.0",
     "fastify-multipart": "^5.0.2",
     "fastify-plugin": "^3.0.0",
     "jsonapi-serializer": "^3.6.7",
