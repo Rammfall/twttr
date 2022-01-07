@@ -38,7 +38,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '16.6.2'
+          versionSpec: '16.13.1'
         displayName: 'Install Node.js'
       - script: |
           npm install
@@ -71,7 +71,7 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: '16.6.2'
+          versionSpec: '16.13.1'
         displayName: 'Install Node.js'
       - script: |
           npm audit
