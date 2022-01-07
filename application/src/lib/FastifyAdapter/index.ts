@@ -101,14 +101,19 @@ class FastifyAdapter {
 
                 const works = actions?.every(async (item) => {
                   const result = await this.actions[item]({
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     body,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     params,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     headers,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     cookies,
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore
                     query,
                     payload: {
@@ -122,6 +127,7 @@ class FastifyAdapter {
                     return false;
                   }
 
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   actionsPayload = { actionsPayload, ...result.payload };
                 });
@@ -129,14 +135,19 @@ class FastifyAdapter {
                 console.log(works, actionsPayload);
 
                 const res = await handler({
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   body,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   params,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   headers,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   cookies,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   query,
                   payload: {
