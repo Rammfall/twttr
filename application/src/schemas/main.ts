@@ -41,6 +41,10 @@ export const mainSchema: Schema = {
           type: 'string',
           format: 'uuid',
         },
+        sessionId: {
+          type: 'string',
+          format: 'uuid',
+        },
       },
     },
   },

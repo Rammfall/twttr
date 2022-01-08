@@ -1,10 +1,9 @@
 import { FastifyCookieOptions } from 'fastify-cookie';
-import { injectable, inject, Container } from 'inversify';
+import { injectable, inject } from 'inversify';
 import Fastify, {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
-  FastifyServerFactory,
   RequestBodyDefault,
 } from 'fastify';
 
@@ -17,7 +16,8 @@ import {
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { SERVER_ADDRESS } from 'config/application';
 import { validate as validateCommon } from 'schemas/main';
-import authCheck from '../../hooks/authCheck';
+
+import authCheck from 'hooks/authCheck';
 
 @injectable()
 class FastifyAdapter {
@@ -78,7 +78,6 @@ class FastifyAdapter {
                 } = request;
                 const cookies = this.cookiesReader(requestCookies, request);
                 const body = this.calculateBody(reqBody);
-                console.log(body);
 
                 const validate = validateCommon(schema);
 
@@ -99,40 +98,38 @@ class FastifyAdapter {
 
                 let actionsPayload: { [key: string]: unknown } = {};
 
-                const works = actions?.every(async (item) => {
-                  const result = await this.actions[item]({
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    body,
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    params,
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    headers,
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    cookies,
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore
-                    query,
-                    payload: {
-                      ip: request.ip,
-                    },
-                  });
+                if (actions) {
+                  for (
+                    let forIndex = 0;
+                    forIndex < actions.length;
+                    forIndex++
+                  ) {
+                    const result = await this.actions[actions[forIndex]]({
+                      // @ts-ignore
+                      body,
+                      // @ts-ignore
+                      params,
+                      // @ts-ignore
+                      headers,
+                      // @ts-ignore
+                      cookies,
+                      // @ts-ignore
+                      query,
+                      payload: {
+                        ip: request.ip,
+                      },
+                    });
 
-                  if (!result.result) {
-                    reply.status(result.reply.status).send(result.reply.body);
+                    if (!result.result) {
+                      return reply
+                        .status(result.reply.status)
+                        .send(result.reply.body);
+                    }
 
-                    return false;
+                    // @ts-ignore
+                    actionsPayload = { ...actionsPayload, ...result.payload };
                   }
-
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
-                  actionsPayload = { actionsPayload, ...result.payload };
-                });
-
-                console.log(works, actionsPayload);
+                }
 
                 const res = await handler({
                   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -243,8 +240,5 @@ class FastifyAdapter {
     }
   };
 }
-
-const container = new Container();
-container.bind<FastifyAdapter>('FastifyAdapter').to(FastifyAdapter);
 
 export default FastifyAdapter;

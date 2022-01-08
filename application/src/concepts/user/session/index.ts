@@ -1,11 +1,11 @@
 import UserSession from 'db/entity/UserSession';
 
 const sessionsList = async ({
-  refreshToken,
+  userId,
 }: {
-  refreshToken: string;
+  userId: number;
 }): Promise<UserSession[]> => {
-  return await UserSession.find({ refreshToken });
+  return await UserSession.find({ userId: userId });
 };
 
 export default sessionsList;

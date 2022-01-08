@@ -6,7 +6,6 @@ jest.mock('fastify');
 
 describe('FastifyAdapter', () => {
   describe('initialize', () => {
-    // function checker
     const application = new FastifyAdapter({
       routes: [{ path: '/check', importPath: './__mocks__', params: [] }],
     });

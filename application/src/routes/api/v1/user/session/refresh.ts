@@ -1,4 +1,4 @@
-import { Actions, httpMethods, RouteParams } from 'types/RouteParams';
+import { httpMethods, RouteParams } from 'types/RouteParams';
 import refreshSessionHandler from 'controllers/user/session/refresh';
 
 const refresh: RouteParams[] = [
@@ -17,7 +17,6 @@ const refresh: RouteParams[] = [
     },
     method: httpMethods.POST,
     handler: refreshSessionHandler,
-    actions: [Actions.authCheck],
   },
 ];
 

@@ -36,7 +36,7 @@ const authCheck = async ({
       return {
         result: true,
         payload: {
-          refreshToken,
+          session,
         },
       };
     } catch (error) {
