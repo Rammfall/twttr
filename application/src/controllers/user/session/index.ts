@@ -15,7 +15,7 @@ const sessionListHandler = async ({
   if (session && session instanceof UserSession) {
     const sessions = await sessionsList({ userId: session.userId });
     const SessionSerializer = new Serializer('session', {
-      attributes: ['sessionId', 'device', 'ip'],
+      attributes: ['sessionId', 'device', 'ip', 'updatedAt'],
     });
 
     return {
