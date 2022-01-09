@@ -21,7 +21,7 @@ services:
       - PSQL_HISTFILE=/root/log/.psql_history
       - POSTGRES_DB=postgres
     ports:
-    - 5555:5432
+    - '5556:5432'
   grafana:
     image: grafana/grafana:latest
     container_name: twttr-grafana
@@ -29,3 +29,10 @@ services:
     user: "104"
     ports:
     - '3030:3000'
+  redis:
+    image: redis:6.2.5-alpine
+    container_name: twttr-cache
+    expose:
+      - 6379
+    ports:
+      - '6379:6379'

@@ -1,20 +1,36 @@
+import { FastifyCookieOptions } from 'fastify-cookie';
+import { injectable, inject } from 'inversify';
 import Fastify, {
   FastifyInstance,
   FastifyReply,
   FastifyRequest,
+  RequestBodyDefault,
 } from 'fastify';
 
-import { httpStatusCodes, RouteParams } from 'types/RouteParams';
+import {
+  Cookie,
+  CookieAction,
+  httpStatusCodes,
+  RouteParams,
+} from 'types/RouteParams';
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { SERVER_ADDRESS } from 'config/application';
 import { validate as validateCommon } from 'schemas/main';
 
+import authCheck from 'hooks/authCheck';
+
+@injectable()
 class FastifyAdapter {
   private server: FastifyInstance;
   private routes: PreparedRoute[];
+  private fastify: typeof Fastify;
 
-  constructor({ routes }: { routes: PreparedRoute[] }) {
+  constructor(
+    { routes }: { routes: PreparedRoute[] },
+    @inject('fastify') fastify: typeof Fastify = Fastify
+  ) {
     this.routes = routes;
+    this.fastify = fastify;
     this.server = Fastify({
       logger: true,
     });
@@ -22,6 +38,7 @@ class FastifyAdapter {
     this.server.register(import('fastify-cookie'), {
       secret: 'secret',
     });
+    this.server.register(import('fastify-csrf'));
     this.server.register(import('fastify-multipart'), {
       limits: {
         fieldNameSize: 1000000,
@@ -38,32 +55,20 @@ class FastifyAdapter {
     this.prepareRoutes();
   }
 
+  actions = {
+    authCheck,
+  };
+
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
       const currentRoute: { default: RouteParams[] } = await import(importPath);
       if (currentRoute.default?.length) {
         currentRoute.default.forEach(
-          ({ handler, schema, hooks = [], method }) => {
+          ({ handler, schema, actions, hooks = [], method }) => {
             this.server.route({
               method,
               url: path,
               handler: async (request: FastifyRequest, reply: FastifyReply) => {
-                let isMultipart = true;
-                const newBody = Object.fromEntries(
-                  // @ts-ignore
-                  Object.keys(request.body).map((key) => {
-                    // @ts-ignore
-                    if (request.body[key].value === undefined) {
-                      isMultipart = false;
-                    }
-                    return [
-                      key,
-                      // @ts-ignore
-                      request.body[key].value,
-                    ];
-                  })
-                );
-
                 const {
                   body: reqBody,
                   params,
@@ -71,19 +76,10 @@ class FastifyAdapter {
                   cookies: requestCookies,
                   query,
                 } = request;
-                const cookies: { [param: string]: string } = {};
+                const cookies = this.cookiesReader(requestCookies, request);
+                const body = this.calculateBody(reqBody);
 
-                if (requestCookies) {
-                  for (const [key, value] of Object.entries(requestCookies)) {
-                    const cookie = request.unsignCookie(value);
-
-                    if (cookie) {
-                      cookies[key] = request.unsignCookie(value).value || '';
-                    }
-                  }
-                }
                 const validate = validateCommon(schema);
-                const body = isMultipart ? newBody : reqBody;
 
                 if (
                   !validate({
@@ -100,41 +96,65 @@ class FastifyAdapter {
                     .send({ errors });
                 }
 
-                const hooksResult = hooks.every((func) =>
-                  // @ts-ignore
-                  func({ params, cookies, body, headers, query })
-                );
+                let actionsPayload: { [key: string]: unknown } = {};
 
-                if (!hooksResult) {
-                  reply.status(400).send();
-                  return;
+                if (actions) {
+                  for (
+                    let forIndex = 0;
+                    forIndex < actions.length;
+                    forIndex++
+                  ) {
+                    const result = await this.actions[actions[forIndex]]({
+                      // @ts-ignore
+                      body,
+                      // @ts-ignore
+                      params,
+                      // @ts-ignore
+                      headers,
+                      // @ts-ignore
+                      cookies,
+                      // @ts-ignore
+                      query,
+                      payload: {
+                        ip: request.ip,
+                      },
+                    });
+
+                    if (!result.result) {
+                      return reply
+                        .status(result.reply.status)
+                        .send(result.reply.body);
+                    }
+
+                    // @ts-ignore
+                    actionsPayload = { ...actionsPayload, ...result.payload };
+                  }
                 }
 
                 const res = await handler({
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   body,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   params,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   headers,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   cookies,
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   // @ts-ignore
                   query,
                   payload: {
                     ip: request.ip,
                   },
+                  actionsPayload,
                 });
 
                 if (res.cookies) {
-                  for (const [key, { value, action }] of Object.entries(
-                    res.cookies
-                  )) {
-                    reply[action](key, value, {
-                      httpOnly: true,
-                      signed: true,
-                    });
-                  }
+                  this.cookieHandler(reply, res.cookies);
                 }
 
                 reply.status(res.status).send(res.body);
@@ -157,6 +177,66 @@ class FastifyAdapter {
     } catch (err) {
       this.server.log.error(err);
       process.exit(1);
+    }
+  };
+
+  calculateBody = (
+    requestBody: RequestBodyDefault
+  ): { [param: string]: unknown } => {
+    const calcBody: { [param: string]: string | { value: string } } =
+      typeof requestBody === 'object' && requestBody !== null
+        ? { ...requestBody }
+        : {};
+    let isMultipart = true;
+    const body = Object.fromEntries(
+      Object.keys(calcBody).map((key) => {
+        const item = calcBody[key];
+        if (typeof item === 'object') {
+          isMultipart = false;
+        }
+
+        if (typeof item === 'object') {
+          return [key, item.value];
+        }
+        return [key];
+      })
+    );
+
+    return isMultipart ? requestBody : body;
+  };
+
+  cookiesReader = (
+    requestCookies: FastifyCookieOptions,
+    request: FastifyRequest
+  ): {
+    [param: string]: string;
+  } => {
+    const cookies: { [param: string]: string } = {};
+    for (const [key, value] of Object.entries(requestCookies)) {
+      const cookie = request.unsignCookie(value);
+
+      if (cookie) {
+        cookies[key] = cookie.value || '';
+      }
+    }
+
+    return cookies;
+  };
+
+  cookieHandler = (reply: FastifyReply, cookies: Cookie): void => {
+    for (const [key, cookie] of Object.entries(cookies)) {
+      if (cookie.action === CookieAction.add) {
+        const { value, action, path } = cookie;
+        reply[action](key, value, {
+          httpOnly: true,
+          signed: true,
+          path,
+        });
+      } else {
+        reply[cookie.action](key, {
+          path: cookie.path,
+        });
+      }
     }
   };
 }

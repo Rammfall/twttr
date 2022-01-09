@@ -1,5 +1,6 @@
 import { Schema, SchemaObject } from 'ajv';
 import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
+import authCheck from '../hooks/authCheck';
 
 export enum httpMethods {
   'GET' = 'GET',
@@ -101,6 +102,9 @@ export interface HandlerArguments<Body> {
   headers: ParamsObject;
   query: Query;
   payload: ParamsObject;
+  actionsPayload: {
+    [key: string]: unknown;
+  };
 }
 
 export interface HttpResult {
@@ -116,10 +120,15 @@ export type Handler = (
 
 export type Hook = (hookArguments: HandlerArguments<never>) => boolean;
 
+export enum Actions {
+  authCheck = 'authCheck',
+}
+
 export interface RouteParams {
   handler: Handler;
   schema: SomeJSONSchema;
   method: httpMethods;
+  actions?: Actions[];
   hooks?: Hook[];
 }
 
@@ -128,9 +137,15 @@ export enum CookieAction {
   add = 'setCookie',
 }
 
-interface Cookie {
-  [param: string]: {
-    value: string;
-    action: CookieAction;
-  };
+export interface Cookie {
+  [param: string]:
+    | {
+        action: CookieAction.remove;
+        path: string;
+      }
+    | {
+        action: CookieAction.add;
+        path: string;
+        value: string;
+      };
 }

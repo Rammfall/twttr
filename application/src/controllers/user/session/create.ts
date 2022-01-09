@@ -19,10 +19,8 @@ const createSessionHandler = async ({
   body: { username, password },
   headers: { 'user-agent': device },
   payload: { ip },
-  cookies,
 }: HandlerArguments<Params>): Promise<HttpResult> => {
   try {
-    console.log(cookies);
     const session = await createSession({
       username,
       password,
@@ -44,10 +42,12 @@ const createSessionHandler = async ({
         accessToken: {
           value: session.accessToken,
           action: CookieAction.add,
+          path: 'session',
         },
         refreshToken: {
           value: session.refreshToken,
           action: CookieAction.add,
+          path: 'session',
         },
       },
     };

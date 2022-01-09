@@ -28,10 +28,12 @@ const refreshSessionHandler = async ({
         accessToken: {
           value: session.accessToken,
           action: CookieAction.add,
+          path: 'session',
         },
         refreshToken: {
           value: session.refreshToken,
           action: CookieAction.add,
+          path: 'session',
         },
       },
     };
@@ -41,6 +43,16 @@ const refreshSessionHandler = async ({
       body: new Error({
         title: typeof message === 'string' ? message : undefined,
       }),
+      cookies: {
+        accessToken: {
+          action: CookieAction.remove,
+          path: 'session',
+        },
+        refreshToken: {
+          action: CookieAction.remove,
+          path: 'session',
+        },
+      },
     };
   }
 };

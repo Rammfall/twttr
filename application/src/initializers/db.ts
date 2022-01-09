@@ -20,6 +20,13 @@ export default async (): Promise<Connection> => {
       ssl,
     },
     logging: true,
+    cache: {
+      type: 'redis',
+      options: {
+        host: 'localhost',
+        port: 6379,
+      },
+    },
   });
 
   console.log({ msg: 'DB was connected', time: new Date() });
