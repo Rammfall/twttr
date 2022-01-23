@@ -91,14 +91,14 @@ interface Query {
   [query: string]: string | string[];
 }
 
-interface Body<T = string> {
-  [item: string]: T;
+interface DefaultShape {
+  [key: string]: unknown;
 }
 
-export interface HandlerArguments<Body> {
+export interface HandlerArguments<Body = DefaultShape, Cookies = DefaultShape> {
   body: Body;
   params: ParamsObject;
-  cookies: Body;
+  cookies: Cookies;
   headers: ParamsObject;
   query: Query;
   payload: ParamsObject;
