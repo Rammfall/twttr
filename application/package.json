@@ -63,7 +63,7 @@
     "dotenv": "^16.0.0",
     "fastify": "^3.27.4",
     "fastify-cookie": "^5.5.0",
-    "fastify-cors": "^6.0.2",
+    "fastify-cors": "^6.0.3",
     "fastify-csrf": "^3.1.0",
     "fastify-formbody": "^5.2.0",
     "fastify-multipart": "^5.3.1",
