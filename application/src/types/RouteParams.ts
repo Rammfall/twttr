@@ -1,6 +1,7 @@
 import { Schema, SchemaObject } from 'ajv';
 import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
 import authCheck from '../hooks/authCheck';
+import { RawRequestDefaultExpression } from 'fastify';
 
 export enum httpMethods {
   'GET' = 'GET',
@@ -87,9 +88,9 @@ interface ParamsObject {
   [param: string]: string;
 }
 
-interface Query {
+export type Query = {
   [query: string]: string | string[];
-}
+};
 
 interface DefaultShape {
   [key: string]: unknown;
@@ -114,9 +115,15 @@ export interface HttpResult {
   headers?: ParamsObject;
 }
 
-export type Handler = (
-  handlerArgs: HandlerArguments<never>
-) => Promise<HttpResult>;
+export type Handler = (handlerArgs: {
+  headers: RawRequestDefaultExpression['headers'];
+  payload: { ip: string };
+  query: boolean;
+  body: { [p: string]: unknown };
+  params: unknown;
+  actionsPayload: { [p: string]: unknown };
+  cookies: { [p: string]: string };
+}) => Promise<HttpResult>;
 
 export type Hook = (hookArguments: HandlerArguments<never>) => boolean;
 

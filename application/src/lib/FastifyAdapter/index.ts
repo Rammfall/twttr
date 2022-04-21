@@ -12,6 +12,7 @@ import {
   CookieAction,
   httpStatusCodes,
   RouteParams,
+  Query,
 } from 'types/RouteParams';
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { SERVER_ADDRESS } from 'config/application';
