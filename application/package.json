@@ -68,7 +68,7 @@
     "fastify-formbody": "^5.2.0",
     "fastify-multipart": "^5.3.1",
     "fastify-plugin": "^3.0.1",
-    "graphql": "^16.3.0",
+    "graphql": "^16.4.0",
     "inversify": "^6.0.1",
     "jsonapi-serializer": "^3.6.7",
     "jsonwebtoken": "^8.5.1",
