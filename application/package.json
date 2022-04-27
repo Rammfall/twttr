@@ -65,7 +65,7 @@
     "fastify-cookie": "^5.6.1",
     "fastify-cors": "^6.0.3",
     "fastify-csrf": "^3.1.0",
-    "fastify-formbody": "^5.2.0",
+    "fastify-formbody": "^5.3.0",
     "fastify-multipart": "^5.3.1",
     "fastify-plugin": "^3.0.1",
     "graphql": "^16.4.0",
