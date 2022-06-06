@@ -51,7 +51,7 @@
     "typescript": "^4.7.2"
   },
   "dependencies": {
-    "@sentry/node": "^6.19.7",
+    "@sentry/node": "^7.0.0",
     "@sentry/tracing": "^7.0.0",
     "@types/jsonapi-serializer": "^3.6.5",
     "@types/jsonwebtoken": "^8.5.8",
