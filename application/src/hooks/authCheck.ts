@@ -27,7 +27,7 @@ const authCheck = async ({
       reply: HttpResult;
     }
 > => {
-  const session = await UserSession.findOne({ refreshToken });
+  const session = await UserSession.findOne({ where: { refreshToken } });
 
   if (session) {
     try {
