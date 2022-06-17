@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@sentry/node": "^7.1.1",
-    "@sentry/tracing": "^7.1.1",
+    "@sentry/tracing": "^7.2.0",
     "@types/jsonapi-serializer": "^3.6.5",
     "@types/jsonwebtoken": "^8.5.8",
     "ajv": "^8.11.0",
