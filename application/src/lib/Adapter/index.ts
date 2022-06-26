@@ -2,7 +2,7 @@ import Fastify, { FastifyInstance } from 'fastify';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
-import { Actions, httpStatusCodes, RouteParams } from 'types/RouteParams';
+import { Actions, httpStatusCodes, RouteParams } from './types';
 import authCheck from '../../hooks/authCheck';
 
 interface AdapterProps {
