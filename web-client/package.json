@@ -23,11 +23,11 @@
   },
   "homepage": "https://github.com/Rammfall/twttr#readme",
   "volta": {
-    "node": "16.13.1",
+    "node": "16.15.0",
     "npm": "8.3.0"
   },
   "engines": {
-    "node": "16.13.1",
+    "node": "16.15.0",
     "npm": "8.3.0"
   },
   "dependencies": {

@@ -1,8 +1,3 @@
-import { Schema, SchemaObject } from 'ajv';
-import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
-import authCheck from '../hooks/authCheck';
-import { RawRequestDefaultExpression } from 'fastify';
-
 export enum httpMethods {
   'GET' = 'GET',
   'DELETE' = 'DELETE',
@@ -82,77 +77,4 @@ export enum httpStatusCodes {
   NetworkAuthenticationRequired = 511,
   NetworkReadTimeoutError = 598,
   NetworkConnectTimeoutError = 599,
-}
-
-interface ParamsObject {
-  [param: string]: string;
-}
-
-export type Query = {
-  [query: string]: string | string[];
-};
-
-interface DefaultShape {
-  [key: string]: unknown;
-}
-
-export interface HandlerArguments<Body = DefaultShape, Cookies = DefaultShape> {
-  body: Body;
-  params: ParamsObject;
-  cookies: Cookies;
-  headers: ParamsObject;
-  query: Query;
-  payload: ParamsObject;
-  actionsPayload: {
-    [key: string]: unknown;
-  };
-}
-
-export interface HttpResult {
-  status: httpStatusCodes;
-  body?: unknown;
-  cookies?: Cookie;
-  headers?: ParamsObject;
-}
-
-export type Handler = (handlerArgs: {
-  headers: RawRequestDefaultExpression['headers'];
-  payload: { ip: string };
-  query: boolean;
-  body: { [p: string]: unknown };
-  params: unknown;
-  actionsPayload: { [p: string]: unknown };
-  cookies: { [p: string]: string };
-}) => Promise<HttpResult>;
-
-export type Hook = (hookArguments: HandlerArguments<never>) => boolean;
-
-export enum Actions {
-  authCheck = 'authCheck',
-}
-
-export interface RouteParams {
-  handler: Handler;
-  schema: SomeJSONSchema;
-  method: httpMethods;
-  actions?: Actions[];
-  hooks?: Hook[];
-}
-
-export enum CookieAction {
-  remove = 'clearCookie',
-  add = 'setCookie',
-}
-
-export interface Cookie {
-  [param: string]:
-    | {
-        action: CookieAction.remove;
-        path: string;
-      }
-    | {
-        action: CookieAction.add;
-        path: string;
-        value: string;
-      };
 }

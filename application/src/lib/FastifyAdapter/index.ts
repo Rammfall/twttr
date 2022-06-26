@@ -12,6 +12,7 @@ import {
   CookieAction,
   httpStatusCodes,
   RouteParams,
+  Query,
 } from 'types/RouteParams';
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { SERVER_ADDRESS } from 'config/application';
@@ -71,13 +72,15 @@ class FastifyAdapter {
               handler: async (request: FastifyRequest, reply: FastifyReply) => {
                 const {
                   body: reqBody,
-                  params,
+                  params: requestParams,
                   headers,
                   cookies: requestCookies,
                   query,
                 } = request;
                 const cookies = this.cookiesReader(requestCookies, request);
                 const body = this.calculateBody(reqBody);
+                const params =
+                  requestParams instanceof Object ? requestParams : {};
 
                 const validate = validateCommon(schema);
 
@@ -105,15 +108,10 @@ class FastifyAdapter {
                     forIndex++
                   ) {
                     const result = await this.actions[actions[forIndex]]({
-                      // @ts-ignore
                       body,
-                      // @ts-ignore
                       params,
-                      // @ts-ignore
                       headers,
-                      // @ts-ignore
                       cookies,
-                      // @ts-ignore
                       query,
                       payload: {
                         ip: request.ip,
@@ -126,26 +124,15 @@ class FastifyAdapter {
                         .send(result.reply.body);
                     }
 
-                    // @ts-ignore
                     actionsPayload = { ...actionsPayload, ...result.payload };
                   }
                 }
 
                 const res = await handler({
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
                   body,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
                   params,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
                   headers,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
                   cookies,
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore
                   query,
                   payload: {
                     ip: request.ip,
