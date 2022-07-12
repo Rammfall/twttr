@@ -39,7 +39,7 @@
     "@types/validator": "^13.7.3",
     "@types/jsonapi-serializer": "^3.6.5",
     "@types/jsonwebtoken": "^8.5.8",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.0",
     "eslint": "^8.18.0",
     "eslint-config-prettier": "^8.5.0",
