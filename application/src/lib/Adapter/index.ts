@@ -1,8 +1,8 @@
-import Fastify, { FastifyInstance } from 'fastify';
+import Fastify, { FastifyInstance, FastifyRequest } from 'fastify';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
-import { Actions, httpStatusCodes, RouteParams } from './types';
+import { Actions, HttpMethods, HttpStatusCodes, RouteParams } from './types';
 import authCheck from '../../hooks/authCheck';
 
 interface AdapterProps {
@@ -75,22 +75,22 @@ class Adapter {
             })
           ) {
             const { errors } = validateRequest;
-            return reply.status(httpStatusCodes.BadRequest).send({
+            return reply.status(HttpStatusCodes.BadRequest).send({
               errors,
             });
           }
 
-          if (actions) {
-            const actionsToRun = actions.map(
-              (actionName) => this.actions[actionName]
-            );
-
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            try {
-              await Promise.all(...actionsToRun);
-            }
-          }
+          // if (actions) {
+          //   const actionsToRun = actions.map(
+          //     (actionName) => this.actions[actionName]
+          //   );
+          //
+          //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          //   // @ts-ignore
+          //   try {
+          //     await Promise.all(...actionsToRun);
+          //   }
+          // }
         },
       });
     });

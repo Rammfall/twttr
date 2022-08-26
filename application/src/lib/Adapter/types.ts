@@ -1,4 +1,4 @@
-export enum httpMethods {
+export enum HttpMethods {
   'GET' = 'GET',
   'DELETE' = 'DELETE',
   'HEAD' = 'HEAD',
@@ -8,7 +8,7 @@ export enum httpMethods {
   'OPTIONS' = 'OPTIONS',
 }
 
-export enum httpStatusCodes {
+export enum HttpStatusCodes {
   Continue = 100,
   SwitchingProtocols = 101,
   Processing = 102,
@@ -77,4 +77,10 @@ export enum httpStatusCodes {
   NetworkAuthenticationRequired = 511,
   NetworkReadTimeoutError = 598,
   NetworkConnectTimeoutError = 599,
+}
+
+export interface Handler {}
+
+export interface RouteParams {
+  handler: Handler;
 }
