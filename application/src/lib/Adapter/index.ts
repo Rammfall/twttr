@@ -4,6 +4,7 @@ import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
 import { Actions, HttpMethods, HttpStatusCodes, RouteParams } from './types';
 import authCheck from '../../hooks/authCheck';
+import { COOKIE_SECRET } from '../../config/application';
 
 interface AdapterProps {
   routes: PreparedRoute[];
@@ -20,19 +21,10 @@ class Adapter {
     });
     this.server.register(import('@fastify/formbody'));
     this.server.register(import('@fastify/cookie'), {
-      // TODO: To config
-      secret: 'secret',
+      secret: COOKIE_SECRET,
     });
     this.server.register(import('@fastify/csrf-protection'));
     this.server.register(import('@fastify/multipart'), {
-      limits: {
-        fieldNameSize: 1000000,
-        fieldSize: 1000000,
-        fields: 1000000,
-        fileSize: 1000000,
-        files: 10,
-        headerPairs: 1000000,
-      },
       addToBody: true,
     });
     // TODO: Add setup cors to config
