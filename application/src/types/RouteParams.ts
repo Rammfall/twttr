@@ -119,7 +119,7 @@ export type Handler = (handlerArgs: {
   headers: RawRequestDefaultExpression['headers'];
   payload: { ip: string };
   query: boolean;
-  body: { [p: string]: unknown };
+  body: unknown;
   params: unknown;
   actionsPayload: { [p: string]: unknown };
   cookies: { [p: string]: string };

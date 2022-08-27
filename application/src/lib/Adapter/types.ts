@@ -1,3 +1,6 @@
+import { RawRequestDefaultExpression } from 'fastify';
+import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
+
 export enum HttpMethods {
   'GET' = 'GET',
   'DELETE' = 'DELETE',
@@ -79,8 +82,30 @@ export enum HttpStatusCodes {
   NetworkConnectTimeoutError = 599,
 }
 
-export interface Handler {}
+export interface HttpResult {
+  status: HttpStatusCodes;
+}
+
+export type Handler = (handlerArgs: {
+  headers: RawRequestDefaultExpression['headers'];
+  query: unknown;
+  body: unknown;
+  params: unknown;
+  cookies: unknown;
+  payload: {
+    ip: string;
+    routerPath: string;
+    routerMethod: string;
+    url: string;
+    method: string;
+  };
+}) => Promise<HttpResult>;
 
 export interface RouteParams {
   handler: Handler;
+  schema: SomeJSONSchema;
+  method: HttpMethods;
+  config: {
+    withAuth: boolean;
+  };
 }

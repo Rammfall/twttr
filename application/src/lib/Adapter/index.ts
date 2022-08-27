@@ -1,10 +1,9 @@
-import Fastify, { FastifyInstance, FastifyRequest } from 'fastify';
+import Fastify, { FastifyInstance } from 'fastify';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
-import { Actions, HttpMethods, HttpStatusCodes, RouteParams } from './types';
-import authCheck from '../../hooks/authCheck';
 import { COOKIE_SECRET } from '../../config/application';
+import { HttpStatusCodes, RouteParams } from './types';
 
 interface AdapterProps {
   routes: PreparedRoute[];
@@ -29,11 +28,8 @@ class Adapter {
     });
     // TODO: Add setup cors to config
     this.server.register(import('@fastify/cors'));
+    this.server.register(import('@fastify/swagger'));
   }
-
-  actions = {
-    authCheck,
-  };
 
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
@@ -48,12 +44,23 @@ class Adapter {
   };
 
   prepareRoute = (currentRoute: RouteParams[], path: string) => {
-    currentRoute.forEach(({ handler, schema, actions, method, hooks }) => {
+    currentRoute.forEach(({ handler, schema, method }) => {
       this.server.route({
         method,
         url: path,
         handler: async (request, reply) => {
-          const { body, headers, params, cookies, query } = request;
+          const {
+            body,
+            headers,
+            params,
+            cookies,
+            query,
+            ip,
+            method,
+            url,
+            routerPath,
+            routerMethod,
+          } = request;
 
           const validateRequest = validateCommon(schema);
 
@@ -72,17 +79,20 @@ class Adapter {
             });
           }
 
-          // if (actions) {
-          //   const actionsToRun = actions.map(
-          //     (actionName) => this.actions[actionName]
-          //   );
-          //
-          //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          //   // @ts-ignore
-          //   try {
-          //     await Promise.all(...actionsToRun);
-          //   }
-          // }
+          await handler({
+            headers,
+            query,
+            body,
+            params,
+            cookies,
+            payload: {
+              ip,
+              routerPath,
+              routerMethod,
+              url,
+              method,
+            },
+          });
         },
       });
     });

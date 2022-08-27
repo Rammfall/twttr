@@ -22,7 +22,9 @@ const refresh: RouteParams[] = [
     },
     method: httpMethods.DELETE,
     handler: deleteSessionHandler,
-    actions: [Actions.authCheck],
+    opts: {
+      auth: true,
+    },
   },
 ];
 
