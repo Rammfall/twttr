@@ -1,10 +1,5 @@
+import { FastifyPluginAsync, FastifyRequest } from 'fastify';
 import {
-  FastifyPluginAsync,
-  FastifyContextConfig,
-  FastifyRequest,
-} from 'fastify';
-import {
-  ContextConfigDefault,
   RawRequestDefaultExpression,
   RawServerDefault,
 } from 'fastify/types/utils';
@@ -50,6 +45,10 @@ export const auth: FastifyPluginAsync = async (instance, opts) => {
 
         try {
           await verify(accessToken as string, LOGIN_ACCESS_SECRET);
+
+          instance.decorate('userId', session.userId);
+
+          return;
         } catch (error) {
           return reply.status(HttpStatusCodes.Unauthorized).send({
             title: userMessages.unauthorized,

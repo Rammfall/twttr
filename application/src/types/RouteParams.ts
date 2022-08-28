@@ -1,6 +1,4 @@
-import { Schema, SchemaObject } from 'ajv';
 import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
-import authCheck from '../hooks/authCheck';
 import { RawRequestDefaultExpression } from 'fastify';
 
 export enum httpMethods {

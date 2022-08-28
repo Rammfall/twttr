@@ -4,7 +4,6 @@
   "description": "Backend application of twttr",
   "main": "dist/index.js",
   "scripts": {
-    "typeorm": "node -r tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js",
     "db:migrate": "npm run typeorm migration:run",
     "db:revert": "npm run typeorm migration:revert",
     "db:reboot": "npm run db:revert && npm run db:migrate",
@@ -12,9 +11,10 @@
     "test": "jest",
     "test:coverage": "jest --coverage",
     "build": "tsc",
-    "start": "node -r tsconfig-paths/register dist/src/index.js",
+    "start": "node -r dotenv/config -r tsconfig-paths/register dist/src/index.js",
     "start:dev": "nodemon",
-    "linter:js": "eslint src/ --max-warnings 0"
+    "linter:js": "eslint src/ --max-warnings 0",
+    "typeorm": "typeorm-ts-node-commonjs --dataSource ./src/initializers/data-source.ts"
   },
   "keywords": [
     "nodejs",

@@ -6,6 +6,7 @@ import {
   httpStatusCodes,
 } from 'types/RouteParams';
 import createUser from 'concepts/user/create';
+import { Handler } from '../../lib/Adapter/types';
 
 interface Params {
   username: string;
@@ -13,7 +14,9 @@ interface Params {
   password: string;
 }
 
-const createUserHandler = async ({
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+const createUserHandler: Handler = async ({
   body: { username, email, password },
 }: HandlerArguments<Params>): Promise<HttpResult> => {
   try {

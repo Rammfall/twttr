@@ -29,7 +29,7 @@ services:
     user: "104"
     ports:
     - '3030:3000'
-  redis:
+  cache:
     image: redis:6.2.5-alpine
     container_name: twttr-cache
     expose:

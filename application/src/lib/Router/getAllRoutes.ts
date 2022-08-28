@@ -1,4 +1,5 @@
 import { readdirSync, statSync } from 'fs';
+import { type } from 'os';
 import { join } from 'path';
 
 function getAllRoutes(
@@ -8,7 +9,8 @@ function getAllRoutes(
 ): string[] {
   const result = readdirSync(dir);
 
-  result.map((part: string) => {
+  // TODO: refactor to reduce
+  result.forEach((part: string) => {
     const absolutePath = join(dir, part);
     const pathStat = statSync(absolutePath);
 
@@ -17,9 +19,12 @@ function getAllRoutes(
       return;
     }
 
-    const str = absolutePath.replace('src/', '');
+    const str = absolutePath.replace(
+      `src${type() === 'Windows_NT' ? '\\' : '/'}`,
+      ''
+    );
 
-    arr.push(str);
+    arr.push(str.replaceAll('\\', '/'));
   });
 
   return arr;

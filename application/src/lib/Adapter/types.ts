@@ -84,6 +84,8 @@ export enum HttpStatusCodes {
 
 export interface HttpResult {
   status: HttpStatusCodes;
+  body: unknown;
+  headers: RawRequestDefaultExpression['headers'];
 }
 
 export type Handler = (handlerArgs: {

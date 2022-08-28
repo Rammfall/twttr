@@ -4,6 +4,7 @@ import os from 'os';
 import FastifyAdapter from 'lib/FastifyAdapter';
 import getAllRoutes from 'lib/Router/getAllRoutes';
 import preparedRouting, { PreparedRoute } from 'lib/Router/prepareRoutes';
+import Adapter from '../Adapter';
 
 interface CoreConfig {
   port?: number;
@@ -16,18 +17,19 @@ class Core {
   private readonly routes: string[];
   private readonly preparedRoutes: PreparedRoute[];
   private readonly multiTread: boolean;
+  private readonly server: Adapter;
 
   constructor({ port, multiTread }: CoreConfig) {
     this.port = port || 3000;
     this.multiTread = multiTread || false;
     this.routes = getAllRoutes(this.directory);
     this.preparedRoutes = preparedRouting(this.routes);
+    console.log(this.preparedRoutes);
+    this.server = new Adapter({ routes: this.preparedRoutes });
   }
 
   private prepare = async (): Promise<void> => {
-    const server = new FastifyAdapter({ routes: this.preparedRoutes });
-
-    await server.start(this.port);
+    await this.server.start(this.port);
   };
 
   start = async (): Promise<void> => {

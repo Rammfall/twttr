@@ -1,10 +1,9 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const processEnv: { [key: string]: string } = process.env;
-
-export const type = 'postgres';
-export const database = processEnv['DB_NAME'];
-export const port = +processEnv['DB_PORT'];
-export const username = processEnv['DB_USERNAME'];
-export const password = processEnv['DB_PASSWORD'];
-export const host = processEnv['DB_HOST'];
+export const DB_TYPE = 'postgres';
+export const DB_NAME = process.env.DB_NAME;
+export const DB_PORT = process.env.DB_PORT;
+export const DB_USERNAME = process.env.DB_USERNAME;
+export const DB_PASSWORD = process.env.DB_PASSWORD;
+export const DB_HOST = process.env.DB_HOST;
+export const CACHE_TYPE = 'redis';
+export const CACHE_HOST = process.env.CACHE_HOST;
+export const CACHE_PORT = process.env.CACHE_PORT;

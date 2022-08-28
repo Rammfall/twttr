@@ -2,7 +2,7 @@ import Fastify, { FastifyInstance } from 'fastify';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
-import { COOKIE_SECRET } from '../../config/application';
+import { COOKIE_SECRET, SERVER_ADDRESS } from '../../config/application';
 import { HttpStatusCodes, RouteParams } from './types';
 
 interface AdapterProps {
@@ -22,13 +22,17 @@ class Adapter {
     this.server.register(import('@fastify/cookie'), {
       secret: COOKIE_SECRET,
     });
-    this.server.register(import('@fastify/csrf-protection'));
+    this.server.register(import('@fastify/csrf-protection'), {
+      cookieOpts: { signed: true },
+    });
     this.server.register(import('@fastify/multipart'), {
       addToBody: true,
     });
     // TODO: Add setup cors to config
     this.server.register(import('@fastify/cors'));
     this.server.register(import('@fastify/swagger'));
+
+    this.prepareRoutes();
   }
 
   prepareRoutes = (): void => {
@@ -38,16 +42,17 @@ class Adapter {
       if (currentRoute.default?.length) {
         this.prepareRoute(currentRoute.default, path);
       } else {
-        this.logError(importPath);
+        // this.logError(importPath);
       }
     });
   };
 
   prepareRoute = (currentRoute: RouteParams[], path: string) => {
-    currentRoute.forEach(({ handler, schema, method }) => {
+    currentRoute.forEach(({ handler, schema, method, config }) => {
       this.server.route({
         method,
         url: path,
+        config,
         handler: async (request, reply) => {
           const {
             body,
@@ -79,7 +84,7 @@ class Adapter {
             });
           }
 
-          await handler({
+          const { status, body: replyBody } = await handler({
             headers,
             query,
             body,
@@ -93,6 +98,8 @@ class Adapter {
               method,
             },
           });
+
+          reply.status(status).send(replyBody);
         },
       });
     });
@@ -103,6 +110,18 @@ class Adapter {
       path: importPath,
       message: `Please, check ${importPath}. It should be array of objects`,
     });
+  };
+
+  start = async (port: number): Promise<void> => {
+    try {
+      await this.server.listen({
+        port,
+        host: SERVER_ADDRESS,
+      });
+    } catch (err) {
+      this.server.log.error(err);
+      process.exit(1);
+    }
   };
 }
 
