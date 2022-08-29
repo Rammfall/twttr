@@ -6,4 +6,4 @@ export const DB_PASSWORD = process.env.DB_PASSWORD;
 export const DB_HOST = process.env.DB_HOST;
 export const CACHE_TYPE = 'redis';
 export const CACHE_HOST = process.env.CACHE_HOST;
-export const CACHE_PORT = process.env.CACHE_PORT;
+export const CACHE_PORT = process.env.CACHE_PORT as unknown as number;

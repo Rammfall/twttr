@@ -4,6 +4,9 @@ import * as Entities from '../db/entity';
 import { UserAccount1620336005117 } from '../db/migration/1620336005117-UserAccount';
 import { UserSession1629023006862 } from '../db/migration/1629023006862-UserSession';
 import {
+  CACHE_HOST,
+  CACHE_PORT,
+  CACHE_TYPE,
   DB_HOST,
   DB_NAME,
   DB_PASSWORD,
@@ -25,10 +28,10 @@ export const AppDataSource = new DataSource({
   migrations: [UserAccount1620336005117, UserSession1629023006862],
   subscribers: [],
   cache: {
-    type: 'redis',
+    type: CACHE_TYPE,
     options: {
-      host: 'localhost',
-      port: 6379,
+      host: CACHE_HOST,
+      port: CACHE_PORT,
     },
   },
 });
