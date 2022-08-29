@@ -1,7 +1,6 @@
 import cluster from 'cluster';
 import os from 'os';
 
-import FastifyAdapter from 'lib/FastifyAdapter';
 import getAllRoutes from 'lib/Router/getAllRoutes';
 import preparedRouting, { PreparedRoute } from 'lib/Router/prepareRoutes';
 import Adapter from '../Adapter';
@@ -24,7 +23,6 @@ class Core {
     this.multiTread = multiTread || false;
     this.routes = getAllRoutes(this.directory);
     this.preparedRoutes = preparedRouting(this.routes);
-    console.log(this.preparedRoutes);
     this.server = new Adapter({ routes: this.preparedRoutes });
   }
 

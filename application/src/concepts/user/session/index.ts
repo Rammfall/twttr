@@ -5,7 +5,7 @@ const sessionsList = async ({
 }: {
   userId: number;
 }): Promise<UserSession[]> => {
-  return await UserSession.find({ userId: userId });
+  return await UserSession.find({ where: { userId } });
 };
 
 export default sessionsList;

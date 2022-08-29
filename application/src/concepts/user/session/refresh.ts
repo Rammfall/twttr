@@ -12,10 +12,10 @@ const refreshSession = async ({
 }: {
   refreshToken: string;
 }): Promise<UserSession> => {
-  const session = await UserSession.findOne(
-    { refreshToken },
-    { relations: ['user'] }
-  );
+  const session = await UserSession.findOne({
+    where: { refreshToken },
+    relations: ['user'],
+  });
 
   if (session) {
     const expiredDate = new Date(session.expiredDate);

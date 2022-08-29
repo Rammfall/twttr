@@ -5,7 +5,7 @@ async function deleteSession({
 }: {
   sessionId: string;
 }): Promise<void> {
-  const session = await UserSession.findOne({ sessionId });
+  const session = await UserSession.findOne({ where: { sessionId } });
 
   if (session) {
     await session.remove();

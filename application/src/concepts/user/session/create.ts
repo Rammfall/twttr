@@ -21,7 +21,7 @@ const createSession = async ({
   device: string;
   ip: string;
 }): Promise<UserSession> => {
-  const user = await UserAccount.findOne({ username });
+  const user = await UserAccount.findOne({ where: { username } });
 
   if (user) {
     if (!(await compare(password, user.password))) {

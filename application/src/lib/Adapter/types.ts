@@ -1,5 +1,6 @@
-import { RawRequestDefaultExpression } from 'fastify';
+import { FastifyInstance, RawRequestDefaultExpression } from 'fastify';
 import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
+import { RawServerBase } from 'fastify/types/utils';
 
 export enum HttpMethods {
   'GET' = 'GET',
@@ -82,26 +83,41 @@ export enum HttpStatusCodes {
   NetworkConnectTimeoutError = 599,
 }
 
-export interface HttpResult {
-  status: HttpStatusCodes;
-  body: unknown;
-  headers: RawRequestDefaultExpression['headers'];
+export interface Cookie {
+  action: CookieAction;
+  name: string;
+  value?: string;
+  path: string;
 }
 
-export type Handler = (handlerArgs: {
-  headers: RawRequestDefaultExpression['headers'];
-  query: unknown;
-  body: unknown;
-  params: unknown;
-  cookies: unknown;
-  payload: {
-    ip: string;
-    routerPath: string;
-    routerMethod: string;
-    url: string;
-    method: string;
-  };
-}) => Promise<HttpResult>;
+export interface HttpResult {
+  status: HttpStatusCodes;
+  body?: unknown;
+  headers?: RawRequestDefaultExpression['headers'];
+  cookies?: Cookie[];
+}
+
+export type Context = FastifyInstance & {
+  userId: number;
+};
+
+export type Handler = (
+  this: Context,
+  handlerArgs: {
+    headers: RawRequestDefaultExpression['headers'];
+    query: unknown;
+    body: unknown;
+    params: unknown;
+    cookies: unknown;
+    payload: {
+      ip: string;
+      routerPath: string;
+      routerMethod: string;
+      url: string;
+      method: string;
+    };
+  }
+) => Promise<HttpResult>;
 
 export interface RouteParams {
   handler: Handler;
@@ -110,4 +126,9 @@ export interface RouteParams {
   config: {
     withAuth: boolean;
   };
+}
+
+export enum CookieAction {
+  remove = 'clearCookie',
+  add = 'setCookie',
 }

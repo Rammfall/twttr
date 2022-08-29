@@ -7,7 +7,7 @@ const endSession = async ({
 }: {
   refreshToken: string;
 }): Promise<boolean> => {
-  const session = await UserSession.findOne({ refreshToken });
+  const session = await UserSession.findOne({ where: { refreshToken } });
 
   if (session) {
     if (isSessionExpired(new Date(session.expiredDate))) {

@@ -3,13 +3,22 @@ services:
   application:
     container_name: twttr-backend
     build: application/
+    environment:
+      REDIS_HOST: cache
+      REDIS_PORT: 6379
+      REDIS_PASSWORD: eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     ports:
     - '3000:3000'
+    depends_on:
+      - database
+      - cache
   client:
     container_name: twttr-frontend
     build: web-client/
     ports:
     - '4000:4000'
+    depends_on:
+      - application
   database:
     container_name: twttr-postgres
     image: postgres:12-alpine
@@ -32,6 +41,7 @@ services:
   cache:
     image: redis:6.2.5-alpine
     container_name: twttr-cache
+    command: redis-server --save 20 1 --loglevel warning --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
     expose:
       - 6379
     ports:

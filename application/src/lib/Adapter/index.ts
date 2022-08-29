@@ -3,7 +3,8 @@ import Fastify, { FastifyInstance } from 'fastify';
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
 import { COOKIE_SECRET, SERVER_ADDRESS } from '../../config/application';
-import { HttpStatusCodes, RouteParams } from './types';
+import { Context, HttpStatusCodes, RouteParams } from './types';
+import { auth } from '../../plugins/auth';
 
 interface AdapterProps {
   routes: PreparedRoute[];
@@ -31,6 +32,7 @@ class Adapter {
     // TODO: Add setup cors to config
     this.server.register(import('@fastify/cors'));
     this.server.register(import('@fastify/swagger'));
+    this.server.register(auth);
 
     this.prepareRoutes();
   }
@@ -42,7 +44,7 @@ class Adapter {
       if (currentRoute.default?.length) {
         this.prepareRoute(currentRoute.default, path);
       } else {
-        // this.logError(importPath);
+        this.logError(importPath);
       }
     });
   };
@@ -53,7 +55,7 @@ class Adapter {
         method,
         url: path,
         config,
-        handler: async (request, reply) => {
+        handler: async function (request, reply) {
           const {
             body,
             headers,
@@ -83,8 +85,14 @@ class Adapter {
               errors,
             });
           }
+          const bindedHandler = handler.bind(this as Context);
 
-          const { status, body: replyBody } = await handler({
+          const {
+            status,
+            body: replyBody,
+            headers: replyHeaders,
+            cookies: replyCookies,
+          } = await bindedHandler({
             headers,
             query,
             body,
@@ -98,6 +106,15 @@ class Adapter {
               method,
             },
           });
+
+          replyCookies?.forEach(({ name, path, value = '', action }) => {
+            reply[action](name, value, {
+              httpOnly: true,
+              path,
+            });
+          });
+
+          replyHeaders && reply.headers(replyHeaders);
 
           reply.status(status).send(replyBody);
         },
