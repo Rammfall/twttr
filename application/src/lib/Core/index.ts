@@ -6,7 +6,7 @@ import preparedRouting, { PreparedRoute } from 'lib/Router/prepareRoutes';
 import Adapter from '../Adapter';
 
 interface CoreConfig {
-  port?: number;
+  port: number;
   multiTread?: boolean;
 }
 

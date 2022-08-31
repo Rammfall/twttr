@@ -7,7 +7,14 @@
     "emitDecoratorMetadata": true,
     "baseUrl": "src",
     "paths": {
-      "*": ["*"],
+      "*": ["*"]
     },
-  }
+    "typeRoots": [
+      "src/@types"
+    ]
+  },
+  "exclude": [
+    "**/*.spec.ts",
+    "**/__tests__/*"
+  ]
 }

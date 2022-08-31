@@ -14,7 +14,8 @@
     "start": "node -r dotenv/config -r tsconfig-paths/register dist/src/index.js",
     "start:dev": "nodemon",
     "linter:js": "eslint src/ --max-warnings 0",
-    "typeorm": "typeorm-ts-node-commonjs --dataSource ./src/initializers/data-source.ts"
+    "typeorm": "typeorm-ts-node-commonjs --dataSource ./src/initializers/data-source.ts",
+    "repl": "ts-node -i -r dotenv/config -r tsconfig-paths/register src/index.ts"
   },
   "keywords": [
     "nodejs",
@@ -70,6 +71,7 @@
     "date-fns": "^2.29.2",
     "dotenv": "^16.0.1",
     "fastify": "^4.5.3",
+    "fastify-plugin": "^4.2.1",
     "graphql": "^16.6.0",
     "inversify": "^6.0.1",
     "jsonapi-serializer": "^3.6.7",
@@ -80,6 +82,7 @@
     "redis": "^4.3.0",
     "reflect-metadata": "^0.1.13",
     "tsconfig-paths": "^4.1.0",
+    "tslib": "^2.4.0",
     "typeorm": "^0.3.7",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
