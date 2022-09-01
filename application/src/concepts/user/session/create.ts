@@ -30,6 +30,7 @@ const createSession = async ({
 
     const accessToken = sign(
       { username, email: user.email },
+      // @ts-ignore
       LOGIN_ACCESS_SECRET,
       {
         expiresIn: LOGIN_ACCESS_EXPIRES,

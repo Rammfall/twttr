@@ -10,7 +10,7 @@
     "db:migration:create": "npm run typeorm migration:create -n",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "build": "tsc",
+    "build": "tsc src/index.ts",
     "start": "node -r dotenv/config -r tsconfig-paths/register dist/src/index.js",
     "start:dev": "nodemon",
     "linter:js": "eslint src/ --max-warnings 0",
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/Rammfall/twttr#readme",
   "devDependencies": {
-    "@tsconfig/node14": "^1.0.3",
+    "@tsconfig/node16": "^1.0.3",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.4.1",
     "@types/jsonapi-serializer": "^3.6.5",

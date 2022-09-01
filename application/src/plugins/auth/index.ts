@@ -27,7 +27,7 @@ export const auth: FastifyPluginAsync = fp(
         }: FastifyRequest<
           RouteGenericInterface,
           RawServerDefault,
-          RawRequestDefaultExpression<RawServerDefault>,
+          RawRequestDefaultExpression,
           FastifySchema,
           FastifyTypeProviderDefault,
           { withAuth: boolean }
@@ -53,8 +53,10 @@ export const auth: FastifyPluginAsync = fp(
               .send({ title: userMessages.sessionNotFound });
 
           try {
+            // @ts-ignore
             await verify(accessToken as string, LOGIN_ACCESS_SECRET);
 
+            // @ts-ignore
             this.userId = session.userId;
 
             return;

@@ -10,11 +10,7 @@
       "*": ["*"]
     },
     "typeRoots": [
-      "src/@types"
+      "./src/@types"
     ]
-  },
-  "exclude": [
-    "**/*.spec.ts",
-    "**/__tests__/*"
-  ]
+  }
 }

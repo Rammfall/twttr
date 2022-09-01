@@ -26,6 +26,7 @@ const refreshSession = async ({
       session.refreshToken = v4();
       session.accessToken = sign(
         { username, email: email },
+        // @ts-ignore
         LOGIN_ACCESS_SECRET,
         {
           expiresIn: LOGIN_ACCESS_EXPIRES,
