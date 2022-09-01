@@ -1,30 +1,21 @@
 import { Error, Serializer } from 'jsonapi-serializer';
 
-import {
-  CookieAction,
-  HandlerArguments,
-  HttpResult,
-  httpStatusCodes,
-} from 'types/RouteParams';
+import { HttpStatusCodes, Handler, CookieAction } from 'lib/Adapter/types';
 import createSession from 'concepts/user/session/create';
 import UserAccount from '../../../db/entity/UserAccount';
 
-interface Params {
-  username: string;
-  email: string;
-  password: string;
-}
-
-const createSessionHandler = async ({
-  body: { username, password },
+const createSessionHandler: Handler = async ({
+  body,
   headers: { 'user-agent': device },
   payload: { ip },
-}: HandlerArguments<Params>): Promise<HttpResult> => {
+}) => {
+  const { username, password } = body as { username: string; password: string };
+
   try {
     const session = await createSession({
       username,
       password,
-      device,
+      device: device || '',
       ip,
     });
     const SessionSerializer = new Serializer('session', {
@@ -36,24 +27,26 @@ const createSessionHandler = async ({
     });
 
     return {
-      status: httpStatusCodes.Success,
+      status: HttpStatusCodes.Success,
       body: SessionSerializer.serialize(session),
-      cookies: {
-        accessToken: {
+      cookies: [
+        {
+          name: 'accessToken',
           value: session.accessToken,
           action: CookieAction.add,
           path: 'session',
         },
-        refreshToken: {
+        {
+          name: 'refreshToken',
           value: session.refreshToken,
           action: CookieAction.add,
           path: 'session',
         },
-      },
+      ],
     };
   } catch ({ message }) {
     return {
-      status: httpStatusCodes.Forbidden,
+      status: HttpStatusCodes.Forbidden,
       body: new Error({
         title: typeof message === 'string' ? message : undefined,
       }),

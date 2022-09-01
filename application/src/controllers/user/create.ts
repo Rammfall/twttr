@@ -1,21 +1,15 @@
 import { Serializer, Error } from 'jsonapi-serializer';
 
-import {
-  HandlerArguments,
-  HttpResult,
-  httpStatusCodes,
-} from 'types/RouteParams';
+import { HttpStatusCodes } from 'lib/Adapter/types';
 import createUser from 'concepts/user/create';
+import { Handler } from '../../lib/Adapter/types';
 
-interface Params {
-  username: string;
-  email: string;
-  password: string;
-}
-
-const createUserHandler = async ({
-  body: { username, email, password },
-}: HandlerArguments<Params>): Promise<HttpResult> => {
+const createUserHandler: Handler = async ({ body }) => {
+  const { username, password, email } = body as {
+    username: string;
+    email: string;
+    password: string;
+  };
   try {
     const user = await createUser({ username, email, password });
 
@@ -24,12 +18,12 @@ const createUserHandler = async ({
     });
 
     return {
-      status: httpStatusCodes.Success,
+      status: HttpStatusCodes.Success,
       body: UserSerializer.serialize(user),
     };
   } catch ({ message }) {
     return {
-      status: httpStatusCodes.Forbidden,
+      status: HttpStatusCodes.Forbidden,
       body: new Error({
         title: typeof message === 'string' ? message : undefined,
       }),

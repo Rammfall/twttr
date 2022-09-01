@@ -1,6 +1,4 @@
-import { Schema, SchemaObject } from 'ajv';
 import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
-import authCheck from '../hooks/authCheck';
 import { RawRequestDefaultExpression } from 'fastify';
 
 export enum httpMethods {
@@ -119,7 +117,7 @@ export type Handler = (handlerArgs: {
   headers: RawRequestDefaultExpression['headers'];
   payload: { ip: string };
   query: boolean;
-  body: { [p: string]: unknown };
+  body: unknown;
   params: unknown;
   actionsPayload: { [p: string]: unknown };
   cookies: { [p: string]: string };

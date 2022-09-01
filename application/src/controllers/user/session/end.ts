@@ -1,52 +1,50 @@
 import { Error } from 'jsonapi-serializer';
 
-import {
-  CookieAction,
-  HandlerArguments,
-  HttpResult,
-  httpStatusCodes,
-} from 'types/RouteParams';
+import { CookieAction, Handler, HttpStatusCodes } from 'lib/Adapter/types';
 import endSession from 'concepts/user/session/end';
 
 interface Params {
   refreshToken: string;
 }
 
-const endSessionHandler = async ({
-  cookies: { refreshToken },
-}: HandlerArguments<Params>): Promise<HttpResult> => {
+const endSessionHandler: Handler = async ({ cookies }) => {
+  const { refreshToken } = cookies as Params;
   try {
     await endSession({ refreshToken });
 
     return {
-      status: httpStatusCodes.Success,
-      cookies: {
-        accessToken: {
+      status: HttpStatusCodes.Success,
+      cookies: [
+        {
+          name: 'accessToken',
           action: CookieAction.remove,
           path: 'session',
         },
-        refreshToken: {
+        {
+          name: 'refreshToken',
           action: CookieAction.remove,
           path: 'session',
         },
-      },
+      ],
     };
   } catch ({ message }) {
     return {
-      status: httpStatusCodes.Forbidden,
+      status: HttpStatusCodes.Forbidden,
       body: new Error({
         title: typeof message === 'string' ? message : undefined,
       }),
-      cookies: {
-        accessToken: {
+      cookies: [
+        {
+          name: 'accessToken',
           action: CookieAction.remove,
           path: 'session',
         },
-        refreshToken: {
+        {
+          name: 'refreshToken',
           action: CookieAction.remove,
           path: 'session',
         },
-      },
+      ],
     };
   }
 };

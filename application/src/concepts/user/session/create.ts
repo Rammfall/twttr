@@ -21,7 +21,7 @@ const createSession = async ({
   device: string;
   ip: string;
 }): Promise<UserSession> => {
-  const user = await UserAccount.findOne({ username });
+  const user = await UserAccount.findOne({ where: { username } });
 
   if (user) {
     if (!(await compare(password, user.password))) {
@@ -30,6 +30,7 @@ const createSession = async ({
 
     const accessToken = sign(
       { username, email: user.email },
+      // @ts-ignore
       LOGIN_ACCESS_SECRET,
       {
         expiresIn: LOGIN_ACCESS_EXPIRES,

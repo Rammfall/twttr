@@ -3,12 +3,12 @@ import 'reflect-metadata';
 import Core from 'lib/Core';
 
 import { APPLICATION_PORT } from './config/application';
-import db from './initializers/db';
+import { AppDataSource } from './initializers/data-source';
 
 const coreApplication = new Core({ port: APPLICATION_PORT });
 
 const start = async () => {
-  await db();
+  await AppDataSource.initialize();
   await coreApplication.start();
 };
 

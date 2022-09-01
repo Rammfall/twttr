@@ -1,8 +1,6 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-const processEnv: { [key: string]: string } = process.env;
-
-export const isProductionEnv = processEnv['NODE_ENV'] === 'production';
-export const APPLICATION_PORT = +processEnv['PORT'];
-export const SERVER_ADDRESS = processEnv['SERVER_ADDRESS'];
-export const LOGIN_ACCESS_SECRET = processEnv['LOGIN_ACCESS_SECRET'];
+export const isProductionEnv = process.env.NODE_ENV === 'production';
+export const APPLICATION_PORT = process.env
+  .APPLICATION_PORT as unknown as number;
+export const SERVER_ADDRESS = process.env.SERVER_ADDRESS;
+export const LOGIN_ACCESS_SECRET = process.env.LOGIN_ACCESS_SECRET;
+export const COOKIE_SECRET = process.env.COOKIE_SECRET;

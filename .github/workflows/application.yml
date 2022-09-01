@@ -16,17 +16,15 @@ on:
 
 env:
   CI: true
-  TYPEORM_CONNECTION: postgres
-  TYPEORM_HOST: localhost
-  TYPEORM_USERNAME: postgres
-  TYPEORM_PASSWORD: postgres
-  TYPEORM_DATABASE: postgres
-  TYPEORM_PORT: 5432
-  TYPEORM_SYNCHRONIZE: true
-  TYPEORM_LOGGING: true
-  TYPEORM_MIGRATIONS_DIR: src/db/migration/
-  TYPEORM_MIGRATIONS: src/db/migration/**/*.ts
-  TYPEORM_ENTITIES: src/db/entity/**/*.ts
+  DB_TYPE: postgres
+  DB_HOST: localhost
+  DB_USERNAME: postgres
+  DB_PASSWORD: postgres
+  DB_NAME: postgres
+  DB_PORT: 5432
+  CACHE_TYPE: redis
+  CACHE_HOST: localhost
+  CACHE_PORT: 6379
 
 jobs:
   build:
@@ -40,6 +38,13 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: postgres
         ports: ["5432:5432"]
+      redis:
+        image: redis
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     defaults:
       run:
         working-directory: ./application
@@ -49,7 +54,7 @@ jobs:
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
-          node-version: 16.15.0
+          node-version: 16.17.0
 
       - name: Install dependencies
         run: npm ci

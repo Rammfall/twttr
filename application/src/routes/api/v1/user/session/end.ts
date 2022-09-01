@@ -1,4 +1,4 @@
-import { httpMethods, RouteParams } from 'types/RouteParams';
+import { HttpMethods, RouteParams } from 'lib/Adapter/types';
 import endSessionHandler from 'controllers/user/session/end';
 
 const end: RouteParams[] = [
@@ -15,8 +15,11 @@ const end: RouteParams[] = [
       },
       required: ['cookies'],
     },
-    method: httpMethods.POST,
+    method: HttpMethods.DELETE,
     handler: endSessionHandler,
+    config: {
+      withAuth: true,
+    },
   },
 ];
 

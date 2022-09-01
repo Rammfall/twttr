@@ -4,17 +4,18 @@
   "description": "Backend application of twttr",
   "main": "dist/index.js",
   "scripts": {
-    "typeorm": "node -r tsconfig-paths/register --require ts-node/register ./node_modules/typeorm/cli.js",
     "db:migrate": "npm run typeorm migration:run",
     "db:revert": "npm run typeorm migration:revert",
     "db:reboot": "npm run db:revert && npm run db:migrate",
     "db:migration:create": "npm run typeorm migration:create -n",
     "test": "jest",
     "test:coverage": "jest --coverage",
-    "build": "tsc",
-    "start": "node -r tsconfig-paths/register dist/src/index.js",
+    "build": "tsc src/index.ts",
+    "start": "node -r dotenv/config -r tsconfig-paths/register dist/src/index.js",
     "start:dev": "nodemon",
-    "linter:js": "eslint src/ --max-warnings 0"
+    "linter:js": "eslint src/ --max-warnings 0",
+    "typeorm": "typeorm-ts-node-commonjs --dataSource ./src/initializers/data-source.ts",
+    "repl": "ts-node -i -r dotenv/config -r tsconfig-paths/register src/index.ts"
   },
   "keywords": [
     "nodejs",
@@ -31,14 +32,14 @@
   },
   "homepage": "https://github.com/Rammfall/twttr#readme",
   "devDependencies": {
-    "@tsconfig/node14": "^1.0.3",
+    "@tsconfig/node16": "^1.0.3",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.4.1",
+    "@types/jsonapi-serializer": "^3.6.5",
+    "@types/jsonwebtoken": "^8.5.9",
     "@types/node": "^18.7.14",
     "@types/uuid": "^8.3.4",
     "@types/validator": "^13.7.6",
-    "@types/jsonapi-serializer": "^3.6.5",
-    "@types/jsonwebtoken": "^8.5.9",
     "@typescript-eslint/eslint-plugin": "^5.36.1",
     "@typescript-eslint/parser": "^5.36.1",
     "eslint": "^8.23.0",
@@ -53,13 +54,12 @@
     "typescript": "^4.8.2"
   },
   "dependencies": {
-    "@sentry/node": "^7.3.0",
-    "@sentry/tracing": "^7.3.0",
     "@fastify/cookie": "^8.1.0",
     "@fastify/cors": "^8.1.0",
     "@fastify/csrf-protection": "^5.1.0",
     "@fastify/formbody": "^7.1.0",
     "@fastify/multipart": "^7.1.1",
+    "@fastify/swagger": "^7.4.1",
     "@sentry/node": "^7.12.0",
     "@sentry/tracing": "^7.12.0",
     "@types/bcrypt": "^5.0.0",
@@ -71,6 +71,7 @@
     "date-fns": "^2.29.2",
     "dotenv": "^16.0.2",
     "fastify": "^4.5.3",
+    "fastify-plugin": "^4.2.1",
     "graphql": "^16.6.0",
     "inversify": "^6.0.1",
     "jsonapi-serializer": "^3.6.7",
@@ -81,18 +82,19 @@
     "redis": "^4.3.0",
     "reflect-metadata": "^0.1.13",
     "tsconfig-paths": "^4.1.0",
+    "tslib": "^2.4.0",
     "typeorm": "^0.3.9",
     "uuid": "^8.3.2",
     "validator": "^13.7.0",
     "yup": "^0.32.11"
   },
   "volta": {
-    "node": "16.13.1",
-    "npm": "8.3.0"
+    "node": "16.17.0",
+    "npm": "8.18.0"
   },
   "engines": {
-    "node": "16.13.1",
-    "npm": "8.3.0"
+    "node": "16.17.0",
+    "npm": "8.18.0"
   },
   "nodemonConfig": {
     "ignore": [

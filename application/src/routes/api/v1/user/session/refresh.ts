@@ -1,4 +1,4 @@
-import { httpMethods, RouteParams } from 'types/RouteParams';
+import { HttpMethods, RouteParams } from 'lib/Adapter/types';
 import refreshSessionHandler from 'controllers/user/session/refresh';
 
 const refresh: RouteParams[] = [
@@ -15,8 +15,11 @@ const refresh: RouteParams[] = [
       },
       required: ['cookies'],
     },
-    method: httpMethods.POST,
+    method: HttpMethods.POST,
     handler: refreshSessionHandler,
+    config: {
+      withAuth: true,
+    },
   },
 ];
 

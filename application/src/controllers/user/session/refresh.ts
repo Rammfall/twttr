@@ -1,19 +1,9 @@
 import { Error, Serializer } from 'jsonapi-serializer';
-import {
-  CookieAction,
-  HandlerArguments,
-  HttpResult,
-  httpStatusCodes,
-} from 'types/RouteParams';
+import { CookieAction, Handler, HttpStatusCodes } from 'lib/Adapter/types';
 import refreshSession from '../../../concepts/user/session/refresh';
 
-interface Params {
-  refreshToken: string;
-}
-
-const refreshSessionHandler = async ({
-  cookies: { refreshToken },
-}: HandlerArguments<Params>): Promise<HttpResult> => {
+const refreshSessionHandler: Handler = async ({ cookies }) => {
+  const { refreshToken } = cookies as { refreshToken: string };
   try {
     const session = await refreshSession({ refreshToken });
 
@@ -22,37 +12,41 @@ const refreshSessionHandler = async ({
     });
 
     return {
-      status: httpStatusCodes.Success,
+      status: HttpStatusCodes.Success,
       body: SessionSerializer.serialize(session),
-      cookies: {
-        accessToken: {
+      cookies: [
+        {
+          name: 'accessToken',
           value: session.accessToken,
           action: CookieAction.add,
           path: 'session',
         },
-        refreshToken: {
+        {
+          name: 'refreshToken',
           value: session.refreshToken,
           action: CookieAction.add,
           path: 'session',
         },
-      },
+      ],
     };
   } catch ({ message }) {
     return {
-      status: httpStatusCodes.Forbidden,
+      status: HttpStatusCodes.Forbidden,
       body: new Error({
         title: typeof message === 'string' ? message : undefined,
       }),
-      cookies: {
-        accessToken: {
+      cookies: [
+        {
+          name: 'accessToken',
           action: CookieAction.remove,
           path: 'session',
         },
-        refreshToken: {
+        {
+          name: 'refreshToken',
           action: CookieAction.remove,
           path: 'session',
         },
-      },
+      ],
     };
   }
 };

@@ -2,8 +2,9 @@ import Fastify, { FastifyInstance } from 'fastify';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import { validate as validateCommon } from 'schemas/main';
-import { Actions, httpStatusCodes, RouteParams } from './types';
-import authCheck from '../../hooks/authCheck';
+import { COOKIE_SECRET, SERVER_ADDRESS } from '../../config/application';
+import { Context, HttpStatusCodes, RouteParams } from './types';
+import { auth } from '../../plugins/auth';
 
 interface AdapterProps {
   routes: PreparedRoute[];
@@ -20,28 +21,21 @@ class Adapter {
     });
     this.server.register(import('@fastify/formbody'));
     this.server.register(import('@fastify/cookie'), {
-      // TODO: To config
-      secret: 'secret',
+      secret: COOKIE_SECRET,
     });
-    this.server.register(import('@fastify/csrf-protection'));
+    this.server.register(import('@fastify/csrf-protection'), {
+      cookieOpts: { signed: true },
+    });
     this.server.register(import('@fastify/multipart'), {
-      limits: {
-        fieldNameSize: 1000000,
-        fieldSize: 1000000,
-        fields: 1000000,
-        fileSize: 1000000,
-        files: 10,
-        headerPairs: 1000000,
-      },
       addToBody: true,
     });
     // TODO: Add setup cors to config
     this.server.register(import('@fastify/cors'));
-  }
+    this.server.register(import('@fastify/swagger'));
+    this.server.register(auth);
 
-  actions = {
-    authCheck,
-  };
+    this.prepareRoutes();
+  }
 
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
@@ -56,12 +50,24 @@ class Adapter {
   };
 
   prepareRoute = (currentRoute: RouteParams[], path: string) => {
-    currentRoute.forEach(({ handler, schema, actions, method, hooks }) => {
+    currentRoute.forEach(({ handler, schema, method, config }) => {
       this.server.route({
         method,
         url: path,
-        handler: async (request, reply) => {
-          const { body, headers, params, cookies, query } = request;
+        config,
+        handler: async function (request, reply) {
+          const {
+            body,
+            headers,
+            params,
+            cookies,
+            query,
+            ip,
+            method,
+            url,
+            routerPath,
+            routerMethod,
+          } = request;
 
           const validateRequest = validateCommon(schema);
 
@@ -75,22 +81,42 @@ class Adapter {
             })
           ) {
             const { errors } = validateRequest;
-            return reply.status(httpStatusCodes.BadRequest).send({
+            return reply.status(HttpStatusCodes.BadRequest).send({
               errors,
             });
           }
+          const bindedHandler = handler.bind(this as Context);
 
-          if (actions) {
-            const actionsToRun = actions.map(
-              (actionName) => this.actions[actionName]
-            );
+          const {
+            status,
+            body: replyBody,
+            headers: replyHeaders,
+            cookies: replyCookies,
+          } = await bindedHandler({
+            headers,
+            query,
+            body,
+            params,
+            cookies,
+            payload: {
+              ip,
+              routerPath,
+              routerMethod,
+              url,
+              method,
+            },
+          });
 
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
-            try {
-              await Promise.all(...actionsToRun);
-            }
-          }
+          replyCookies?.forEach(({ name, path, value = '', action }) => {
+            reply[action](name, value, {
+              httpOnly: true,
+              path,
+            });
+          });
+
+          replyHeaders && reply.headers(replyHeaders);
+
+          reply.status(status).send(replyBody);
         },
       });
     });
@@ -101,6 +127,18 @@ class Adapter {
       path: importPath,
       message: `Please, check ${importPath}. It should be array of objects`,
     });
+  };
+
+  start = async (port: number): Promise<void> => {
+    try {
+      await this.server.listen({
+        port,
+        host: SERVER_ADDRESS,
+      });
+    } catch (err) {
+      this.server.log.error(err);
+      process.exit(1);
+    }
   };
 }
 

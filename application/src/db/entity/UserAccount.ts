@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-import validationLength from 'constants/validations';
+import validationLength from '../../constants/validations';
 
 import { UserAccount1620336005117 } from '../migration/1620336005117-UserAccount';
 

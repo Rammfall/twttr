@@ -1,4 +1,4 @@
-import { httpMethods, RouteParams } from 'types/RouteParams';
+import { HttpMethods, RouteParams } from 'lib/Adapter/types';
 import createUserHandler from 'controllers/user/create';
 
 const user: RouteParams[] = [
@@ -16,7 +16,10 @@ const user: RouteParams[] = [
       },
       required: ['body'],
     },
-    method: httpMethods.POST,
+    method: HttpMethods.POST,
+    config: {
+      withAuth: false,
+    },
   },
 ];
 
