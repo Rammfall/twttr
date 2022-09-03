@@ -61,7 +61,7 @@
     "@fastify/multipart": "^7.1.1",
     "@fastify/swagger": "^7.4.1",
     "@sentry/node": "^7.12.1",
-    "@sentry/tracing": "^7.12.0",
+    "@sentry/tracing": "^7.12.1",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.4.1",
     "ajv": "^8.11.0",
