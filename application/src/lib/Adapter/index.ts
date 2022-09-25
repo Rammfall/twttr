@@ -19,23 +19,28 @@ class Adapter {
     this.server = Fastify({
       logger: true,
     });
-    this.server.register(import('@fastify/formbody'));
-    this.server.register(import('@fastify/cookie'), {
+
+    this.initPlugins().then(() => {
+      this.prepareRoutes();
+    });
+  }
+
+  initPlugins = async () => {
+    await this.server.register(import('@fastify/formbody'));
+    await this.server.register(import('@fastify/cookie'), {
       secret: COOKIE_SECRET,
     });
-    this.server.register(import('@fastify/csrf-protection'), {
+    await this.server.register(import('@fastify/csrf-protection'), {
       cookieOpts: { signed: true },
     });
-    this.server.register(import('@fastify/multipart'), {
+    await this.server.register(import('@fastify/multipart'), {
       addToBody: true,
     });
     // TODO: Add setup cors to config
-    this.server.register(import('@fastify/cors'));
-    this.server.register(import('@fastify/swagger'));
-    this.server.register(auth);
-
-    this.prepareRoutes();
-  }
+    await this.server.register(import('@fastify/cors'));
+    await this.server.register(import('@fastify/swagger'));
+    await this.server.register(auth);
+  };
 
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
