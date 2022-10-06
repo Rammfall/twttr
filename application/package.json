@@ -60,7 +60,7 @@
     "@fastify/formbody": "^7.3.0",
     "@fastify/multipart": "^7.2.0",
     "@fastify/swagger": "^7.6.1",
-    "@sentry/node": "^7.14.0",
+    "@sentry/node": "^7.14.2",
     "@sentry/tracing": "^7.14.0",
     "@types/bcrypt": "^5.0.0",
     "@types/jest": "^27.4.1",
