@@ -71,7 +71,7 @@
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
     "fastify": "^4.6.0",
-    "fastify-plugin": "^4.2.1",
+    "fastify-plugin": "^4.3.0",
     "graphql": "^16.6.0",
     "inversify": "^6.0.1",
     "jsonapi-serializer": "^3.6.7",
