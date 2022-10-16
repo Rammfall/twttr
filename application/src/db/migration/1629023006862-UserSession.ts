@@ -5,6 +5,7 @@ import {
   TableForeignKey,
 } from 'typeorm';
 import { UserAccount1620336005117 } from './1620336005117-UserAccount';
+import validationLength from '../../constants/validations';
 
 export class UserSession1629023006862 implements MigrationInterface {
   static tableName = 'UserSession';
@@ -33,7 +34,7 @@ export class UserSession1629023006862 implements MigrationInterface {
           {
             name: 'device',
             type: 'varchar',
-            length: '30',
+            length: validationLength.session.device.maxLength.toString(),
             isNullable: false,
           },
           {

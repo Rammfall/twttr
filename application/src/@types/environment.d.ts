@@ -5,7 +5,7 @@ declare global {
     interface ProcessEnv {
       APPLICATION_PORT: number;
       NODE_ENV: 'development' | 'production';
-      DB_NAME: number;
+      DB_NAME: string;
       DB_PORT: number;
       DB_USERNAME: string;
       DB_PASSWORD: string;
@@ -20,6 +20,11 @@ declare global {
 
 declare module 'fastify' {
   import { IncomingMessage, Server, ServerResponse } from 'http';
+  import { FastifySchema as FS } from 'fastify/types/schema';
+
+  export interface FastifySchema extends FS {
+    cookies?: unknown;
+  }
 
   export interface FastifyInstance<
     HttpServer = Server,

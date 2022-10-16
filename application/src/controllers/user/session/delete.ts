@@ -1,10 +1,9 @@
-import { Error, Serializer } from 'jsonapi-serializer';
+import { Error } from 'jsonapi-serializer';
 
 import deleteSession from 'concepts/user/session/delete';
 import UserSession from 'db/entity/UserSession';
 import { userMessages } from 'constants/messages';
-import sessionsList from '../../../concepts/user/session';
-import { Handler, HttpStatusCodes } from '../../../lib/Adapter/types';
+import { Handler, HttpStatusCodes } from 'lib/Adapter/types';
 
 interface Params {
   sessionId: string;

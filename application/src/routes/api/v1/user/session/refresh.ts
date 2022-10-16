@@ -4,16 +4,23 @@ import refreshSessionHandler from 'controllers/user/session/refresh';
 const refresh: RouteParams[] = [
   {
     schema: {
-      $id: 'validation/schemas/refreshSession.json',
-      type: 'object',
-      properties: {
-        cookies: {
-          type: 'object',
-          $ref: 'main.json#/definitions/session',
-          required: ['refreshToken', 'accessToken'],
+      description: 'Refresh token',
+      summary: 'Refresh token',
+      tags: ['User'],
+      cookies: {
+        type: 'object',
+        properties: {
+          accessToken: {
+            type: 'string',
+            format: 'accessToken',
+          },
+          refreshToken: {
+            type: 'string',
+            format: 'uuid',
+          },
         },
+        required: ['refreshToken', 'accessToken'],
       },
-      required: ['cookies'],
     },
     method: HttpMethods.POST,
     handler: refreshSessionHandler,

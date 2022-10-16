@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import env from 'dotenv';
 import { DataSource } from 'typeorm';
 import * as Entities from '../db/entity';
 import { UserAccount1620336005117 } from '../db/migration/1620336005117-UserAccount';

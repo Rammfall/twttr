@@ -1,25 +1,51 @@
 import { Serializer, Error } from 'jsonapi-serializer';
 
-import { HttpStatusCodes } from 'lib/Adapter/types';
+import { CookieAction, HttpStatusCodes } from 'lib/Adapter/types';
 import createUser from 'concepts/user/create';
 import { Handler } from '../../lib/Adapter/types';
+import createSession from '../../concepts/user/session/create';
+import UserAccount from '../../db/entity/UserAccount';
 
-const createUserHandler: Handler = async ({ body }) => {
+const createUserHandler: Handler = async ({
+  body,
+  payload: { ip },
+  // TODO: Move to constants
+  headers: { 'user-agent': device = 'unresolved device' },
+}) => {
   const { username, password, email } = body as {
     username: string;
     email: string;
     password: string;
   };
   try {
-    const user = await createUser({ username, email, password });
-
-    const UserSerializer = new Serializer('user', {
-      attributes: ['email', 'username', 'role'],
+    await createUser({ username, email, password });
+    console.log(device, ip);
+    const session = await createSession({ username, password, ip, device });
+    const SessionSerializer = new Serializer('session', {
+      attributes: ['accessToken', 'refreshToken', 'user', 'sessionId'],
+      user: {
+        ref: (_: undefined, user: UserAccount) => user.id,
+        attributes: ['username', 'email', 'role'],
+      },
     });
 
     return {
       status: HttpStatusCodes.Success,
-      body: UserSerializer.serialize(user),
+      body: await SessionSerializer.serialize(session),
+      cookies: [
+        {
+          name: 'accessToken',
+          value: session.accessToken,
+          action: CookieAction.add,
+          path: 'session',
+        },
+        {
+          name: 'refreshToken',
+          value: session.refreshToken,
+          action: CookieAction.add,
+          path: 'session',
+        },
+      ],
     };
   } catch ({ message }) {
     return {

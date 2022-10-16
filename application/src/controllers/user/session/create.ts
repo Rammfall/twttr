@@ -15,6 +15,7 @@ const createSessionHandler: Handler = async ({
     const session = await createSession({
       username,
       password,
+      // Default value from constant
       device: device || '',
       ip,
     });

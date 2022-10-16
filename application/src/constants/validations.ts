@@ -15,7 +15,7 @@ const validationLength = {
   },
   session: {
     device: {
-      maxLength: 30,
+      maxLength: 300,
     },
     ip: {
       maxLength: 30,

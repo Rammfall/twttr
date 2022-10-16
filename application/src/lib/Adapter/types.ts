@@ -1,6 +1,7 @@
 import { FastifyInstance, RawRequestDefaultExpression } from 'fastify';
-import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
+import { SchemaObject } from 'ajv';
 import { RawServerBase } from 'fastify/types/utils';
+import { FastifySchema } from 'fastify/types/schema';
 
 export enum HttpMethods {
   'GET' = 'GET',
@@ -121,7 +122,7 @@ export type Handler = (
 
 export interface RouteParams {
   handler: Handler;
-  schema: SomeJSONSchema;
+  schema: FastifySchema | { cookies?: unknown };
   method: HttpMethods;
   config: {
     withAuth: boolean;

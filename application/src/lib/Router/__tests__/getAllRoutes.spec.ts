@@ -1,3 +1,5 @@
+import { describe, it, expect } from "@jest/globals";
+
 import getAllRoutes from '../getAllRoutes';
 
 describe('getAllRoutes', () => {
@@ -14,7 +16,7 @@ describe('getAllRoutes', () => {
     it('returns empty array', () => {
       expect(
         getAllRoutes('src/lib/Router/__mocks__/emptyFolder')
-      ).toStrictEqual([]);
+        ).toStrictEqual(['lib/Router/__mocks__/emptyFolder/.keep']);
     });
   });
 

@@ -7,16 +7,23 @@ const list: RouteParams[] = [
     method: HttpMethods.GET,
     handler: sessionListHandler,
     schema: {
-      $id: 'validation/schemas/refreshSession.json',
-      type: 'object',
-      properties: {
-        cookies: {
-          type: 'object',
-          $ref: 'main.json#/definitions/session',
-          required: ['refreshToken', 'accessToken'],
+      description: 'All sessions',
+      summary: 'All sessions',
+      tags: ['User'],
+      cookies: {
+        type: 'object',
+        properties: {
+          accessToken: {
+            type: 'string',
+            format: 'accessToken',
+          },
+          refreshToken: {
+            type: 'string',
+            format: 'uuid',
+          },
         },
+        required: ['refreshToken', 'accessToken'],
       },
-      required: ['cookies'],
     },
     config: {
       withAuth: true,
@@ -24,21 +31,33 @@ const list: RouteParams[] = [
   },
   {
     schema: {
-      $id: 'validation/schemas/deleteSession.json',
-      type: 'object',
-      properties: {
-        cookies: {
-          type: 'object',
-          $ref: 'main.json#/definitions/session',
-          required: ['refreshToken', 'accessToken'],
+      description: 'Drop session',
+      summary: 'Drop session',
+      tags: ['User'],
+      cookies: {
+        type: 'object',
+        properties: {
+          accessToken: {
+            type: 'string',
+            format: 'accessToken',
+          },
+          refreshToken: {
+            type: 'string',
+            format: 'uuid',
+          },
         },
-        body: {
-          type: 'object',
-          $ref: 'main.json#/definitions/session',
-          required: ['sessionId'],
-        },
+        required: ['refreshToken', 'accessToken'],
       },
-      required: ['cookies', 'body'],
+      body: {
+        type: 'object',
+        properties: {
+          sessionId: {
+            type: 'string',
+            format: 'uuid',
+          },
+        },
+        required: ['sessionId'],
+      },
     },
     method: HttpMethods.DELETE,
     handler: deleteSessionHandler,

@@ -10,7 +10,7 @@
 //       properties: {
 //         body: {
 //           type: 'object',
-//           $ref: 'main.json#/definitions/user',
+//           $ref: 'validation/schemas/main.json#/definitions/user',
 //           required: ['username', 'email', 'password'],
 //         },
 //       },
