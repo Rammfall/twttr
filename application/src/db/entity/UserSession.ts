@@ -22,21 +22,21 @@ class UserSession extends BaseEntity {
     primary: true,
     nullable: false,
   })
-  sessionId!: string;
+    sessionId!: string;
 
   @Column({
     name: 'refreshToken',
     type: 'uuid',
     nullable: false,
   })
-  refreshToken!: string;
+    refreshToken!: string;
 
   @Column({
     name: 'accessToken',
     type: 'text',
     nullable: false,
   })
-  accessToken!: string;
+    accessToken!: string;
 
   @Column({
     name: 'device',
@@ -44,20 +44,20 @@ class UserSession extends BaseEntity {
     length: validationLength.session.device.maxLength,
     nullable: false,
   })
-  device!: string;
+    device!: string;
 
   @Column({
     name: 'expiredDate',
     type: 'timestamp',
     nullable: false,
   })
-  expiredDate!: Date | string;
+    expiredDate!: Date | string;
 
   @Column({
     type: 'varchar',
     length: validationLength.session.ip.maxLength,
   })
-  ip!: string;
+    ip!: string;
 
   @Column({
     type: 'bigint',
@@ -68,13 +68,13 @@ class UserSession extends BaseEntity {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  user!: UserAccount;
+    user!: UserAccount;
 
   @CreateDateColumn()
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt!: Date;
+    updatedAt!: Date;
 }
 
 export default UserSession;

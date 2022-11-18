@@ -1,4 +1,4 @@
-import {describe, it, expect} from "@jest/globals";
+import { describe, it, expect } from '@jest/globals';
 
 describe('createUser()', () => {
   it('returns correct value', () => {

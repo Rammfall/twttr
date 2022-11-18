@@ -1,5 +1,4 @@
 import Fastify, { FastifyInstance } from 'fastify';
-import os from 'os';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
 import {
@@ -7,9 +6,9 @@ import {
   SERVER_ADDRESS,
   APPLICATION_PORT,
 } from 'config/application';
-import { Context, RouteParams } from './types';
 import { auth } from 'plugins/auth';
 import validator from 'validator';
+import { Context, RouteParams } from './types';
 
 interface AdapterProps {
   routes: PreparedRoute[];
@@ -17,6 +16,7 @@ interface AdapterProps {
 
 class Adapter {
   private server: FastifyInstance;
+
   private routes: PreparedRoute[];
 
   constructor({ routes }: AdapterProps) {
@@ -27,8 +27,7 @@ class Adapter {
         customOptions: {
           allErrors: true,
           formats: {
-            password: (password: string): boolean =>
-              validator.isStrongPassword(password),
+            password: (password: string): boolean => validator.isStrongPassword(password),
             accessToken: (token: string): boolean => validator.isJWT(token),
           },
         },
@@ -95,7 +94,9 @@ class Adapter {
   };
 
   prepareRoute = (currentRoute: RouteParams[], path: string) => {
-    currentRoute.forEach(({ handler, schema, method, config }) => {
+    currentRoute.forEach(({
+      handler, schema, method, config,
+    }) => {
       this.server.route({
         method,
         url: path,
@@ -103,7 +104,7 @@ class Adapter {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         /* @ts-ignore */
         schema,
-        handler: async function (request, reply) {
+        async handler(request, reply) {
           const {
             body,
             headers,
@@ -139,7 +140,9 @@ class Adapter {
             },
           });
 
-          replyCookies?.forEach(({ name, path, value = '', action }) => {
+          replyCookies?.forEach(({
+            name, path, value = '', action,
+          }) => {
             reply[action](name, value, {
               httpOnly: true,
               path: '/session',
@@ -148,7 +151,7 @@ class Adapter {
             });
           });
 
-          replyHeaders && (await reply.headers(replyHeaders));
+          if (replyHeaders) await reply.headers(replyHeaders);
 
           return reply.status(status).send(replyBody);
         },
@@ -157,6 +160,7 @@ class Adapter {
   };
 
   logError = (importPath: string) => {
+    // eslint-disable-next-line no-console
     console.error({
       path: importPath,
       message: `Please, check ${importPath}. It should be array of objects`,

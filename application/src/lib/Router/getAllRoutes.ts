@@ -5,7 +5,7 @@ import { join } from 'path';
 function getAllRoutes(
   dir: string,
   arr: string[] = [],
-  rootDir = dir
+  rootDir = dir,
 ): string[] {
   const result = readdirSync(dir);
 
@@ -21,7 +21,7 @@ function getAllRoutes(
 
     const str = absolutePath.replace(
       `src${type() === 'Windows_NT' ? '\\' : '/'}`,
-      ''
+      '',
     );
 
     arr.push(str.replaceAll('\\', '/'));

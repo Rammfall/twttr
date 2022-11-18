@@ -65,7 +65,7 @@ export class UserSession1629023006862 implements MigrationInterface {
             onUpdate: 'NOW()',
           },
         ],
-      })
+      }),
     );
 
     await queryRunner.createForeignKey(
@@ -76,7 +76,7 @@ export class UserSession1629023006862 implements MigrationInterface {
         referencedTableName: UserAccount1620336005117.tableName,
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
-      })
+      }),
     );
   }
 

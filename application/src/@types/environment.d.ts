@@ -19,18 +19,13 @@ declare global {
 }
 
 declare module 'fastify' {
-  import { IncomingMessage, Server, ServerResponse } from 'http';
   import { FastifySchema as FS } from 'fastify/types/schema';
 
   export interface FastifySchema extends FS {
     cookies?: unknown;
   }
 
-  export interface FastifyInstance<
-    HttpServer = Server,
-    HttpRequest = IncomingMessage,
-    HttpResponse = ServerResponse
-  > {
+  export interface FastifyInstance {
     userId: number;
   }
 }

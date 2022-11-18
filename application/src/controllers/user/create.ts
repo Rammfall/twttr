@@ -1,8 +1,7 @@
 import { Serializer, Error } from 'jsonapi-serializer';
 
-import { CookieAction, HttpStatusCodes } from 'lib/Adapter/types';
+import { CookieAction, HttpStatusCodes, Handler } from 'lib/Adapter/types';
 import createUser from 'concepts/user/create';
-import { Handler } from '../../lib/Adapter/types';
 import createSession from '../../concepts/user/session/create';
 import UserAccount from '../../db/entity/UserAccount';
 
@@ -20,7 +19,9 @@ const createUserHandler: Handler = async ({
   try {
     await createUser({ username, email, password });
     console.log(device, ip);
-    const session = await createSession({ username, password, ip, device });
+    const session = await createSession({
+      username, password, ip, device,
+    });
     const SessionSerializer = new Serializer('session', {
       attributes: ['accessToken', 'refreshToken', 'user', 'sessionId'],
       user: {

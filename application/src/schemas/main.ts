@@ -56,8 +56,7 @@ export const validate = (schema: Schema): ValidateFunction => {
 
   compiler.addFormat('password', {
     type: 'string',
-    validate: (password: string): boolean =>
-      validator.isStrongPassword(password),
+    validate: (password: string): boolean => validator.isStrongPassword(password),
   });
 
   compiler.addFormat('accessToken', {

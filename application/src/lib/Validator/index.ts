@@ -20,6 +20,11 @@ class Validator {
   }
 }
 
+interface Entity {
+  title: string;
+  properties: EntityProperties;
+}
+
 interface EntityProperties {
   [prop: string]: {
     type: Types | Entity;
@@ -27,11 +32,6 @@ interface EntityProperties {
     maximum?: number;
     format?: Formats;
   };
-}
-
-interface Entity {
-  title: string;
-  properties: EntityProperties;
 }
 
 const user = {

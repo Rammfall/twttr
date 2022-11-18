@@ -30,33 +30,33 @@ class UserAccount extends BaseEntity {
     nullable: false,
     unique: true,
   })
-  username!: string;
+    username!: string;
 
   @Column({
     type: 'varchar',
     length: validationLength.user.email.maxLength,
     nullable: false,
   })
-  email!: string;
+    email!: string;
 
   @Column({
     type: 'text',
     nullable: false,
   })
-  password!: string;
+    password!: string;
 
   @Column({
     type: 'enum',
     enum: ['admin', 'user', 'owner'],
   })
-  role!: Roles;
+    role!: Roles;
 
   @CreateDateColumn({
     type: 'timestamp',
     default: 'NOW()',
     nullable: false,
   })
-  createdAt!: Date;
+    createdAt!: Date;
 
   @UpdateDateColumn({
     type: 'timestamp',
@@ -64,7 +64,7 @@ class UserAccount extends BaseEntity {
     onUpdate: 'NOW()',
     nullable: false,
   })
-  updatedAt!: Date;
+    updatedAt!: Date;
 }
 
 export default UserAccount;
