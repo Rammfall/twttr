@@ -1,20 +1,54 @@
 import { HttpMethods, RouteParams } from 'lib/Adapter/types';
 import createUserHandler from 'controllers/user/create';
+import validationLength from 'constants/validations';
 
 const user: RouteParams[] = [
   {
     handler: createUserHandler,
     schema: {
-      $id: 'validation/schemas/createUser.json',
-      type: 'object',
-      properties: {
-        body: {
+      description: 'Registration',
+      summary: 'Registration',
+      tags: ['User'],
+      body: {
+        type: 'object',
+        properties: {
+          username: {
+            type: 'string',
+            minLength: validationLength.user.username.minLength,
+            maxLength: validationLength.user.username.maxLength,
+          },
+          email: {
+            type: 'string',
+            minLength: validationLength.user.email.minLength,
+            maxLength: validationLength.user.email.maxLength,
+            format: 'email',
+          },
+          password: {
+            type: 'string',
+            minLength: validationLength.user.password.minLength,
+            maxLength: validationLength.user.password.maxLength,
+            format: 'password',
+          },
+        },
+        required: ['username', 'email', 'password'],
+      },
+      response: {
+        200: {
           type: 'object',
-          $ref: 'main.json#/definitions/user',
-          required: ['username', 'email', 'password'],
+          headers: {
+            'set-cookie': {
+              type: 'string',
+              description: 'accessToken=token; Path=session; HttpOnly',
+            },
+          },
+          cookies: {
+            first: {
+              type: 'string',
+              description: 'Bla',
+            },
+          },
         },
       },
-      required: ['body'],
     },
     method: HttpMethods.POST,
     config: {

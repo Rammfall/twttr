@@ -4,16 +4,23 @@ import endSessionHandler from 'controllers/user/session/end';
 const end: RouteParams[] = [
   {
     schema: {
-      $id: 'validation/schemas/refreshSession.json',
-      type: 'object',
-      properties: {
-        cookies: {
-          type: 'object',
-          $ref: 'main.json#/definitions/session',
-          required: ['refreshToken', 'accessToken'],
+      description: 'Logout',
+      summary: 'Logout',
+      tags: ['User'],
+      cookies: {
+        type: 'object',
+        properties: {
+          accessToken: {
+            type: 'string',
+            format: 'accessToken',
+          },
+          refreshToken: {
+            type: 'string',
+            format: 'uuid',
+          },
         },
+        required: ['refreshToken', 'accessToken'],
       },
-      required: ['cookies'],
     },
     method: HttpMethods.DELETE,
     handler: endSessionHandler,

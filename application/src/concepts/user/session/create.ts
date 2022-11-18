@@ -30,11 +30,10 @@ const createSession = async ({
 
     const accessToken = sign(
       { username, email: user.email },
-      // @ts-ignore
       LOGIN_ACCESS_SECRET,
       {
         expiresIn: LOGIN_ACCESS_EXPIRES,
-      }
+      },
     );
     const refreshToken = v4();
     const session = new UserSession();

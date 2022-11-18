@@ -49,7 +49,7 @@ export class UserAccount1620336005117 implements MigrationInterface {
             onUpdate: 'NOW()',
           },
         ],
-      })
+      }),
     );
   }
 

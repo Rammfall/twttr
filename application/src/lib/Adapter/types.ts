@@ -1,6 +1,5 @@
 import { FastifyInstance, RawRequestDefaultExpression } from 'fastify';
-import { SomeJSONSchema } from 'ajv/dist/types/json-schema';
-import { RawServerBase } from 'fastify/types/utils';
+import { FastifySchema } from 'fastify/types/schema';
 
 export enum HttpMethods {
   'GET' = 'GET',
@@ -83,6 +82,11 @@ export enum HttpStatusCodes {
   NetworkConnectTimeoutError = 599,
 }
 
+export enum CookieAction {
+  remove = 'clearCookie',
+  add = 'setCookie',
+}
+
 export interface Cookie {
   action: CookieAction;
   name: string;
@@ -121,14 +125,9 @@ export type Handler = (
 
 export interface RouteParams {
   handler: Handler;
-  schema: SomeJSONSchema;
+  schema: FastifySchema | { cookies?: unknown };
   method: HttpMethods;
   config: {
     withAuth: boolean;
   };
-}
-
-export enum CookieAction {
-  remove = 'clearCookie',
-  add = 'setCookie',
 }

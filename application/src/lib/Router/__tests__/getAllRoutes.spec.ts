@@ -1,3 +1,5 @@
+import { describe, it, expect } from '@jest/globals';
+
 import getAllRoutes from '../getAllRoutes';
 
 describe('getAllRoutes', () => {
@@ -13,8 +15,8 @@ describe('getAllRoutes', () => {
   describe('if folder has no files', () => {
     it('returns empty array', () => {
       expect(
-        getAllRoutes('src/lib/Router/__mocks__/emptyFolder')
-      ).toStrictEqual([]);
+        getAllRoutes('src/lib/Router/__mocks__/emptyFolder'),
+      ).toStrictEqual(['lib/Router/__mocks__/emptyFolder/.keep']);
     });
   });
 

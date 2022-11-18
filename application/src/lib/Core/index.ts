@@ -12,10 +12,15 @@ interface CoreConfig {
 
 class Core {
   private readonly port: number;
+
   private readonly directory = 'src/routes';
+
   private readonly routes: string[];
+
   private readonly preparedRoutes: PreparedRoute[];
+
   private readonly multiTread: boolean;
+
   private readonly server: Adapter;
 
   constructor({ port, multiTread }: CoreConfig) {

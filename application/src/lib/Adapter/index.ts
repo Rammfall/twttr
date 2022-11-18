@@ -1,10 +1,14 @@
 import Fastify, { FastifyInstance } from 'fastify';
 
 import { PreparedRoute } from 'lib/Router/prepareRoutes';
-import { validate as validateCommon } from 'schemas/main';
-import { COOKIE_SECRET, SERVER_ADDRESS } from '../../config/application';
-import { Context, HttpStatusCodes, RouteParams } from './types';
-import { auth } from '../../plugins/auth';
+import {
+  COOKIE_SECRET,
+  SERVER_ADDRESS,
+  APPLICATION_PORT,
+} from 'config/application';
+import { auth } from 'plugins/auth';
+import validator from 'validator';
+import { Context, RouteParams } from './types';
 
 interface AdapterProps {
   routes: PreparedRoute[];
@@ -12,30 +16,70 @@ interface AdapterProps {
 
 class Adapter {
   private server: FastifyInstance;
+
   private routes: PreparedRoute[];
 
   constructor({ routes }: AdapterProps) {
     this.routes = routes;
     this.server = Fastify({
       logger: true,
+      ajv: {
+        customOptions: {
+          allErrors: true,
+          formats: {
+            password: (password: string): boolean => validator.isStrongPassword(password),
+            accessToken: (token: string): boolean => validator.isJWT(token),
+          },
+        },
+      },
     });
-    this.server.register(import('@fastify/formbody'));
-    this.server.register(import('@fastify/cookie'), {
+
+    this.initPlugins().then(() => {
+      this.prepareRoutes();
+    });
+  }
+
+  initPlugins = async () => {
+    await this.server.register(import('@fastify/formbody'));
+    await this.server.register(import('@fastify/cookie'), {
       secret: COOKIE_SECRET,
     });
-    this.server.register(import('@fastify/csrf-protection'), {
+    await this.server.register(import('@fastify/csrf-protection'), {
       cookieOpts: { signed: true },
     });
-    this.server.register(import('@fastify/multipart'), {
+    await this.server.register(import('@fastify/multipart'), {
       addToBody: true,
     });
     // TODO: Add setup cors to config
-    this.server.register(import('@fastify/cors'));
-    this.server.register(import('@fastify/swagger'));
-    this.server.register(auth);
-
-    this.prepareRoutes();
-  }
+    await this.server.register(import('@fastify/cors'));
+    await this.server.register(import('@fastify/swagger'), {
+      routePrefix: '/documentation',
+      openapi: {
+        info: {
+          title: 'Twttr api reference',
+          description: '',
+          version: '0.1.0',
+        },
+        servers: [
+          {
+            url: `http://localhost:${APPLICATION_PORT}`,
+          },
+        ],
+        components: {
+          securitySchemes: {
+            apiKey: {
+              type: 'apiKey',
+              name: 'apiKey',
+              in: 'cookie',
+            },
+          },
+        },
+      },
+      hideUntagged: true,
+      exposeRoute: true,
+    });
+    await this.server.register(auth);
+  };
 
   prepareRoutes = (): void => {
     this.routes.forEach(async ({ path, importPath }) => {
@@ -50,12 +94,17 @@ class Adapter {
   };
 
   prepareRoute = (currentRoute: RouteParams[], path: string) => {
-    currentRoute.forEach(({ handler, schema, method, config }) => {
+    currentRoute.forEach(({
+      handler, schema, method, config,
+    }) => {
       this.server.route({
         method,
         url: path,
         config,
-        handler: async function (request, reply) {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        /* @ts-ignore */
+        schema,
+        async handler(request, reply) {
           const {
             body,
             headers,
@@ -69,22 +118,6 @@ class Adapter {
             routerMethod,
           } = request;
 
-          const validateRequest = validateCommon(schema);
-
-          if (
-            !validateRequest({
-              body,
-              params,
-              headers,
-              cookies,
-              query,
-            })
-          ) {
-            const { errors } = validateRequest;
-            return reply.status(HttpStatusCodes.BadRequest).send({
-              errors,
-            });
-          }
           const bindedHandler = handler.bind(this as Context);
 
           const {
@@ -107,22 +140,27 @@ class Adapter {
             },
           });
 
-          replyCookies?.forEach(({ name, path, value = '', action }) => {
+          replyCookies?.forEach(({
+            name, path, value = '', action,
+          }) => {
             reply[action](name, value, {
               httpOnly: true,
-              path,
+              path: '/session',
+              expires: new Date(),
+              signed: true,
             });
           });
 
-          replyHeaders && reply.headers(replyHeaders);
+          if (replyHeaders) await reply.headers(replyHeaders);
 
-          reply.status(status).send(replyBody);
+          return reply.status(status).send(replyBody);
         },
       });
     });
   };
 
   logError = (importPath: string) => {
+    // eslint-disable-next-line no-console
     console.error({
       path: importPath,
       message: `Please, check ${importPath}. It should be array of objects`,

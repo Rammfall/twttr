@@ -105,6 +105,22 @@ export interface HandlerArguments<Body = DefaultShape, Cookies = DefaultShape> {
     [key: string]: unknown;
   };
 }
+export enum CookieAction {
+  remove = 'clearCookie',
+  add = 'setCookie',
+}
+export interface Cookie {
+  [param: string]:
+    | {
+    action: CookieAction.remove;
+    path: string;
+  }
+    | {
+    action: CookieAction.add;
+    path: string;
+    value: string;
+  };
+}
 
 export interface HttpResult {
   status: httpStatusCodes;
@@ -135,22 +151,4 @@ export interface RouteParams {
   method: httpMethods;
   actions?: Actions[];
   hooks?: Hook[];
-}
-
-export enum CookieAction {
-  remove = 'clearCookie',
-  add = 'setCookie',
-}
-
-export interface Cookie {
-  [param: string]:
-    | {
-        action: CookieAction.remove;
-        path: string;
-      }
-    | {
-        action: CookieAction.add;
-        path: string;
-        value: string;
-      };
 }
