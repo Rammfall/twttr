@@ -59,7 +59,7 @@
     "@fastify/csrf-protection": "^6.0.0",
     "@fastify/formbody": "^7.3.0",
     "@fastify/multipart": "^7.2.0",
-    "@fastify/swagger": "^8.0.0",
+    "@fastify/swagger": "^8.2.1",
     "@sentry/node": "^7.15.0",
     "@sentry/tracing": "^7.15.0",
     "@types/bcrypt": "^5.0.0",
