@@ -36,7 +36,7 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@testing-library/react": "^13.4.0",
+    "@testing-library/react": "^14.0.0",
     "@types/node": "^18.11.0",
     "@types/react": "^18.0.21",
     "cypress": "^10.10.0",
