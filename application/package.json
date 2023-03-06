@@ -37,7 +37,7 @@
     "@types/jest": "^27.4.1",
     "@types/jsonapi-serializer": "^3.6.5",
     "@types/jsonwebtoken": "^8.5.9",
-    "@types/node": "^18.11.0",
+    "@types/node": "^18.14.6",
     "@types/uuid": "^8.3.4",
     "@types/validator": "^13.7.7",
     "@typescript-eslint/eslint-plugin": "^5.40.0",
